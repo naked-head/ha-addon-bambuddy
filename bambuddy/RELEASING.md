@@ -49,8 +49,9 @@ staged return, not after it.
 
 ## If it breaks in production
 
-1. Tag the previous known-good commit as a new patch version — don't
-   force-push or delete the bad tag; users who already upgraded need a
-   version number higher than the broken one.
+1. Revert the offending change on `main` (or fix forward), bump `version:`
+   in `config.yaml` to a number *higher* than the broken one, and merge.
+   Users who already upgraded need a higher version to be offered the fix —
+   reverting `version:` to the old number leaves them stuck.
 2. Add a scenario to `test/scenarios/` that reproduces the failure.
 3. Verify the new scenario fails against the broken image, passes against the fix.
