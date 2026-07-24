@@ -5,6 +5,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.0.13] - 2026-07-24
+
+### Changed
+- Updated BamBuddy to 1.2.5 (from 0.2.4.9). Upstream changed its versioning scheme — the leading digit went from 0 to 1, but this is a normal successor release on the same code base, not a rewrite.
+
+### Notes
+Upstream release notes: https://github.com/maziggy/bambuddy/releases/tag/1.2.5
+
+Behaviour changes worth knowing about before updating:
+- Bed levelling, flow calibration and nozzle-offset calibration are now three-way Off / Auto / On, with new prints defaulting to Auto. Existing queued prints are migrated automatically.
+- Bambu Cloud sign-in state is now detected correctly. If you linked your Bambu account before enabling authentication, you may need to re-link once from the Profiles page.
+- P1S / P1P AMS drying is screen-only — upstream removed Start/Stop because P1 firmware discards the command.
+- REST smart plugs (Shelly): if your Energy JSON Path points at a lifetime counter, move it to the new "Energy JSON Path (lifetime)" field.
+- Take a fresh backup after updating — backups made on older builds carry a degraded schema.
+
 ## [1.0.12]
 
 - **Fixed a config upgrade issue**: `enable_share`, `enable_media`, and `certfile` (added in 1.0.11) were required fields in the schema, which broke saving the configuration for anyone who updated from 1.0.10 or earlier without those keys already present. They are now optional (`bool?`/`str?`); the App already handled their absence gracefully at runtime (features simply stay disabled), it was only the schema stopping the save. Applied the same fix preemptively to `enable_ipv6`, introduced below, for the same reason.
@@ -112,7 +127,8 @@ Shortly after the 1.0.11 release, a bug was found in the automatic timezone dete
 - Configurable bind address for multi-IP setups (e.g. IP alias to avoid port conflicts)
 - Configurable timezone and log level
 
-[Unreleased]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.12...HEAD
+[Unreleased]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.13...HEAD
+[1.0.13]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.12...bambuddy-v1.0.13
 [1.0.12]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.11...bambuddy-v1.0.12
 [1.0.11]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.10...bambuddy-v1.0.11
 [1.0.10]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.9...bambuddy-v1.0.10
