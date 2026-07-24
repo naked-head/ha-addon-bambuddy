@@ -17,6 +17,14 @@ building the Dockerfile locally (~15 minutes on a typical HA host).
    `ghcr.io/naked-head/ha-app-bambu-studio-api-amd64:<version>`
 5. Tag the merged commit, for your own reference (see "Tagging" below)
 
+Note the gap between steps 3 and 4: merging publishes the new `version:`
+immediately, but the image only appears on GHCR when the builder finishes
+(~3 minutes). A user who opens the App Store in that window sees the new
+version, fails to pull the image, and falls back to a local build. The
+window is short, but if you want to avoid it entirely, run the builder
+manually via `workflow_dispatch` with the new version *before* merging the
+`version:` bump — then the image already exists when the bump lands.
+
 ## Before merging
 
 - [ ] CI green (shellcheck, yaml, smoke)

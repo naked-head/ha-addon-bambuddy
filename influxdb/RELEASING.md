@@ -20,6 +20,14 @@ bashio on top of the InfluxDB base image on the user's own hardware).
    - `ghcr.io/naked-head/ha-app-influxdb-aarch64:<version>`
 5. Tag the merged commit, for your own reference (see "Tagging" below)
 
+Note the gap between steps 3 and 4: merging publishes the new `version:`
+immediately, but the images only appear on GHCR when the builder finishes —
+and both architecture jobs must complete, not just the first. A user on the
+slower architecture who opens the App Store in that window sees the new
+version, fails to pull, and falls back to a local build. To avoid it, run
+the builder manually via `workflow_dispatch` with the new version *before*
+merging the `version:` bump.
+
 ## Before merging
 
 - [ ] CI green (shellcheck, yaml, smoke)
@@ -99,9 +107,12 @@ staged rollout once `main` is updated.
 
 ## If it breaks in production
 
-1. Tag the previous known-good commit as a new patch version — don't
-   force-push or delete the bad tag; users who already upgraded need a
-   version number higher than the broken one.
+1. Revert the offending change on `main` (or fix forward), bump `version:`
+   in `config.yaml` to a number *higher* than the broken one, and merge.
+   Users who already upgraded need a higher version to be offered the fix —
+   reverting `version:` to the old number leaves them stuck. Remember the
+   builder needs to finish for both architectures before the fix is
+   actually installable.
 2. Add a scenario to `test/scenarios/` that reproduces the failure.
 3. Verify the new scenario fails against the broken image, passes against
    the fix.
