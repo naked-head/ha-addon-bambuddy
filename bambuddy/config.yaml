@@ -1,5 +1,5 @@
 name: BamBuddy
-version: "1.0.12"
+version: "1.0.13"
 slug: bambuddy
 description: Self-hosted command center for Bambu Lab printers. No cloud required.
 url: https://github.com/naked-head/homeassistant-addons
