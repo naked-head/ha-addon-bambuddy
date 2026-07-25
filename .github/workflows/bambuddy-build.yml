@@ -1,0 +1,78 @@
+name: BamBuddy Builder
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "bambuddy/**"
+      - ".github/workflows/bambuddy-build.yml"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Override app version (defaults to config.yaml)"
+        required: false
+permissions:
+  contents: read
+  packages: write
+jobs:
+  build:
+    name: Build ${{ matrix.arch }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            platform: linux/amd64
+          - arch: aarch64
+            platform: linux/arm64
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Read app version from config.yaml
+        id: meta
+        run: |
+          version="${{ github.event.inputs.version }}"
+          if [ -z "${version}" ]; then
+            version=$(grep -E '^version:' bambuddy/config.yaml | sed -E 's/version:[[:space:]]*"?([^"]+)"?/\1/')
+          fi
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          owner_lc=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          echo "image=ghcr.io/${owner_lc}/ha-app-bambuddy-${{ matrix.arch }}" >> "$GITHUB_OUTPUT"
+          echo "Building BamBuddy app version: ${version} (${{ matrix.arch }})"
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: ${{ matrix.platform }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push ${{ matrix.arch }} image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./bambuddy
+          file: ./bambuddy/Dockerfile
+          platforms: ${{ matrix.platform }}
+          push: true
+          provenance: false
+          build-args: |
+            BUILD_FROM=ghcr.io/home-assistant/${{ matrix.arch }}-base-python:3.13-alpine3.21
+          tags: |
+            ${{ steps.meta.outputs.image }}:${{ steps.meta.outputs.version }}
+            ${{ steps.meta.outputs.image }}:latest
+          cache-from: type=gha,scope=bambuddy-${{ matrix.arch }}
+          cache-to: type=gha,mode=max,scope=bambuddy-${{ matrix.arch }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.version=${{ steps.meta.outputs.version }}
