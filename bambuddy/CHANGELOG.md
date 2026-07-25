@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.0.14]
+
+- Switched to pre-built images published on GHCR (amd64 + aarch64)
+- Install and update no longer compile the image locally, fixing out-of-memory hangs on low-RAM ARM boards (e.g. Raspberry Pi 4)
+- Local Dockerfile build retained as automatic fallback
+
 ## [1.0.13] - 2026-07-24
 
 ### Changed
@@ -127,7 +133,8 @@ Shortly after the 1.0.11 release, a bug was found in the automatic timezone dete
 - Configurable bind address for multi-IP setups (e.g. IP alias to avoid port conflicts)
 - Configurable timezone and log level
 
-[Unreleased]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.13...HEAD
+[Unreleased]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.14...HEAD
+[1.0.14]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.13...bambuddy-v1.0.14
 [1.0.13]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.12...bambuddy-v1.0.13
 [1.0.12]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.11...bambuddy-v1.0.12
 [1.0.11]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.10...bambuddy-v1.0.11
