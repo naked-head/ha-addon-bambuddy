@@ -1,8 +1,6 @@
 {
   "log_level": "info",
   "trusted_frame_origins": [],
-  "enable_share": false,
-  "enable_media": false,
   "use_system_trust_store": false,
   "certfile": "custom_ca.crt",
   "enable_ipv6": false
