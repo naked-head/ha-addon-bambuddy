@@ -20,9 +20,20 @@ body:
       label: Confirm this issue belongs here
       options:
         - label: >-
+            I am aware that naked-head is a grumpy maintainer, so it can happen that
+            my issue will be closed quickly when essential information is missing
+            (no logs, no description, no steps to reproduce, etc.).
+          required: true
+        - label: >-
             This is about installing, updating, or configuring the Bambu Studio API
             App itself (not about slicing results or slicer behavior).
           required: true
+        - label: |
+            I confirm that I did not actually read any of the points above and just checked them all. |
+            I didn't want to waste time on details, so I skipped reading or following any existing instructions. |
+            Instead, I'd like naked-head to spend their free time explaining things to me — that's what open source is for, right? |
+            I live by the motto: better to ask twice than think once. |
+            It's naked-head's own fault for offering open-source software and free support.
 
   - type: input
     id: app-version
