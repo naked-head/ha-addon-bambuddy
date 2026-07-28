@@ -28,6 +28,12 @@ body:
             This is about installing, updating, or configuring the Bambu Studio API
             App itself (not about slicing results or slicer behavior).
           required: true
+        - label: I have read the App's README/DOCS.md before opening this issue.
+          required: true
+        - label: >-
+            I have checked existing issues (including closed ones) to make sure
+            this isn't a duplicate.
+          required: true
         - label: |
             I confirm that I did not actually read any of the points above and just checked them all. |
             I didn't want to waste time on details, so I skipped reading or following any existing instructions. |
