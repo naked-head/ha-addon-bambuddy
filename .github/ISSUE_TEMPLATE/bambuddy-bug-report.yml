@@ -1,6 +1,6 @@
 name: BamBuddy App — Bug Report
 description: Problem installing, updating, or configuring the BamBuddy App for Home Assistant.
-labels: ["bug", "app:bambuddy"]
+labels: ["app:bambuddy"]
 body:
   - type: markdown
     attributes:
@@ -21,6 +21,10 @@ body:
         which just delays getting help. Rule of thumb: if reinstalling the App or
         changing one of its options wouldn't affect the problem, it's an upstream issue.
 
+        **Note:** attachments sent via email reply to a GitHub issue notification are
+        automatically stripped and deleted by GitHub — they will not reach this issue.
+        Please attach files directly on github.com instead.
+
   - type: checkboxes
     id: confirm-scope
     attributes:
@@ -35,11 +39,21 @@ body:
             This is about installing, updating, or configuring the BamBuddy App itself
             (not about BamBuddy's behavior once it's running).
           required: true
+        - label: My Home Assistant version is up to date.
+          required: true
+        - label: >-
+            I have checked, via HACS' 3-dot menu → "Update Information" on this App,
+            that I am running the **latest** released version.
+          required: true
         - label: I have read the App's README/DOCS.md before opening this issue.
           required: true
         - label: >-
             I have checked existing issues (including closed ones) to make sure
             this isn't a duplicate.
+          required: true
+        - label: >-
+            I confirm this is genuinely an issue with the App (not just a question
+            about how a feature works).
           required: true
         - label: |
             I confirm that I did not actually read any of the points above and just checked them all. |
@@ -65,6 +79,17 @@ body:
         - Home Assistant OS
         - Home Assistant Supervised
         - Other / not sure
+    validations:
+      required: true
+
+  - type: dropdown
+    id: arch
+    attributes:
+      label: Architecture
+      options:
+        - amd64
+        - aarch64
+        - Not sure
     validations:
       required: true
 
