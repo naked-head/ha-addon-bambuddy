@@ -5,6 +5,35 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.0.15]
+
+### Changed
+- Updated BamBuddy to 1.2.5.1 (from 1.2.5). A bugfix-only upstream release — no new features, no breaking changes. It adds one database column (file modification times), applied automatically on both SQLite and PostgreSQL at first start.
+
+  Full upstream release notes: https://github.com/maziggy/bambuddy/releases/tag/v1.2.5.1
+
+  If you are coming from 1.0.12 or earlier (BamBuddy 0.2.4.9), read the 1.0.13 entry below first — all of its upgrade callouts still apply to you.
+
+- **⚠️ Breaking change — replaced `enable_share` / `enable_media` (booleans) with `share_subfolder` / `media_subfolder` (strings).** The previous toggles exposed the *entire* `/share` or `/media` folder to BamBuddy's File Manager — since these folders are shared by every App and integration on the HA instance, this meant BamBuddy could see (and, if writable, modify) files belonging to unrelated Apps. The new options scope access to a single named subfolder instead (e.g. `share_subfolder: bambuddy` exposes only `/share/bambuddy`), and there is intentionally no option to expose the whole folder anymore.
+  - **Migration — this one needs a manual step.** Your old `enable_share`/`enable_media` setting is *not* carried over: those keys no longer exist, and "the whole folder" has no equivalent in the new options by design. After updating, open the App configuration and fill in the new field.
+    - If your files were already in a subfolder of `/share` or `/media` (e.g. `/share/3dprints`), just enter that subfolder's name (`3dprints`) and everything works exactly as before — same path in BamBuddy's File Manager, nothing to move.
+    - Only if you kept files directly in the root of `/share` or `/media` do you need to move them into a subfolder first, then register the new path in **File Manager → Add external folder**.
+  - The subfolder is created automatically on first start if it doesn't exist.
+  - Input is sanitized against `..` path segments; a leading `/share/` or `/media/` typed into the value is logged as a warning rather than silently accepted.
+
+### Fixed
+- **BamBuddy's own backups no longer inflate Home Assistant's App backups.** Previously, BamBuddy's internal backup folder lived inside this App's persistent data volume, which Home Assistant's own backup feature snapshots in full — every HA backup taken after that point would also contain every BamBuddy backup made since, growing without bound. BamBuddy's backup folder is now redirected to `/share/bambuddy_backups`, which HA does not include in its own backups by default.
+
+  **What happens to your existing backups.** On the first start after updating, any backups found in the old location are **moved** to `/share/bambuddy_backups` — copied first, then verified file by file, and only then removed from the data volume. This is deliberate: leaving a second copy inside the data volume would keep inflating your HA backups, which is the whole point of the change. You'll see `Migrating existing BamBuddy backups to /share/bambuddy_backups` in the App log when this runs. Nothing to do on your side.
+
+  **If the migration can't be verified** (a copy fails, the disk is full, `/share` is read-only), nothing is deleted: the originals are left in place, renamed to `backups.not-migrated`, and the log shows an error instead. In that case, once you've confirmed `/share/bambuddy_backups` holds everything you care about, delete the leftover folder manually — it is *not* removed automatically, and it will keep bloating your HA backups until you do:
+
+  1. Install the **File Editor** or **Samba** App if you don't already have it.
+  2. Browse to the App data folder: `apps/data/<prefix>_bambuddy/bambuddy_data/backups.not-migrated`. The `<prefix>` is a hash that differs on every installation — look for the folder ending in `_bambuddy`.
+  3. Compare its contents against `/share/bambuddy_backups`, then delete the `backups.not-migrated` folder.
+
+  If you'd rather keep those old backups, move them somewhere under `/share` or `/media` instead of deleting them — anywhere outside the App's data volume is fine.
+
 ## [1.0.14]
 
 - Switched to pre-built images published on GHCR (amd64 + aarch64)
@@ -133,7 +162,8 @@ Shortly after the 1.0.11 release, a bug was found in the automatic timezone dete
 - Configurable bind address for multi-IP setups (e.g. IP alias to avoid port conflicts)
 - Configurable timezone and log level
 
-[Unreleased]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.14...HEAD
+[Unreleased]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.15...HEAD
+[1.0.15]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.14...bambuddy-v1.0.15
 [1.0.14]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.13...bambuddy-v1.0.14
 [1.0.13]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.12...bambuddy-v1.0.13
 [1.0.12]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.11...bambuddy-v1.0.12

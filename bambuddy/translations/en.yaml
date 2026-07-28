@@ -39,17 +39,26 @@ configuration:
       Optional external PostgreSQL connection string (e.g.
       postgresql+asyncpg://bambuddy:password@db-host:5432/bambuddy). Leave
       empty to use BamBuddy's built-in SQLite database.
-  enable_share:
-    name: Enable /share as External Folder
+  share_subfolder:
+    name: Share Subfolder
     description: >-
-      Allow BamBuddy's File Manager to register Home Assistant's /share
-      folder as an external library folder (NAS shares, USB drives, etc.
-      already reachable via /share).
-  enable_media:
-    name: Enable /media as External Folder
+      Example: "bambuddy" exposes /share/bambuddy. Name of a subfolder under
+      Home Assistant's /share to expose to BamBuddy's File Manager as an
+      external library folder. Enter just the subfolder name, without a
+      leading /share/. The folder is created automatically on start if it
+      doesn't exist. Leave empty to disable. There is no option to expose
+      the whole /share folder, since it's shared by every App on this Home
+      Assistant instance.
+  media_subfolder:
+    name: Media Subfolder
     description: >-
-      Allow BamBuddy's File Manager to register Home Assistant's /media
-      folder as an external library folder.
+      Example: "bambuddy" exposes /media/bambuddy. Name of a subfolder under
+      Home Assistant's /media to expose to BamBuddy's File Manager as an
+      external library folder. Enter just the subfolder name, without a
+      leading /media/. The folder is created automatically on start if it
+      doesn't exist. Leave empty to disable. There is no option to expose
+      the whole /media folder, since it's shared by every App on this Home
+      Assistant instance.
   use_system_trust_store:
     name: Use System Trust Store
     description: >-

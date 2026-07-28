@@ -4,8 +4,8 @@
   "trusted_frame_origins": ["http://ha.test:8123", "https://example.com"],
   "ha_url": "http://127.0.0.1:1",
   "ha_token": "fake-token-for-test",
-  "enable_share": true,
-  "enable_media": true,
+  "share_subfolder": "bambuddy",
+  "media_subfolder": "bambuddy",
   "use_system_trust_store": false,
   "certfile": "custom_ca.crt",
   "enable_ipv6": false

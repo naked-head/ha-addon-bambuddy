@@ -16,8 +16,8 @@ This app is part of the [`naked-head/homeassistant-addons`](https://github.com/n
 | `ha_url` | string | *(unset)* | URL of the Home Assistant instance BamBuddy talks to. Leave unset to use this Supervisor's own Core API automatically |
 | `ha_token` | password | *(unset)* | Long-lived access token for `ha_url`. Leave unset to use the Supervisor's own token automatically — only needed if `ha_url` points to a different, external HA instance |
 | `database_url` | password | *(unset)* | External PostgreSQL connection string, e.g. `postgresql+asyncpg://bambuddy:password@db-host:5432/bambuddy`. Leave unset to use BamBuddy's built-in SQLite database |
-| `enable_share` | boolean | `false` | Allow registering Home Assistant's `/share` folder as an external File Manager folder |
-| `enable_media` | boolean | `false` | Allow registering Home Assistant's `/media` folder as an external File Manager folder |
+| `share_subfolder` | string | *(unset)* | Subfolder under Home Assistant's `/share` to expose to BamBuddy's File Manager (e.g. `bambuddy`). Leave unset to disable. Do **not** include a leading `/share/` — just the subfolder name |
+| `media_subfolder` | string | *(unset)* | Subfolder under Home Assistant's `/media` to expose to BamBuddy's File Manager (e.g. `bambuddy`). Leave unset to disable. Do **not** include a leading `/media/` — just the subfolder name |
 | `use_system_trust_store` | boolean | `false` | Enable if BamBuddy needs to trust a self-signed certificate (e.g. a self-signed HA instance at `ha_url`) |
 | `certfile` | string | `custom_ca.crt` | Filename of the CA certificate to install, placed in this add-on's config folder. Only used when `use_system_trust_store` is enabled |
 | `enable_ipv6` | boolean | `false` | Bind on `::` instead of `0.0.0.0` for IPv6 reachability. **Opt-in and off by default** — see warning below |
@@ -36,16 +36,20 @@ This add-on runs with `homeassistant_api: true`, so on a normal HA Supervised/OS
 
 ---
 
-## External library folders (`enable_share` / `enable_media`)
+## External library folders (`share_subfolder` / `media_subfolder`)
 
-BamBuddy's File Manager can mount external host folders (NAS shares, USB drives, etc.) without copying files into its own library. This add-on mounts Home Assistant's `/share` and `/media` folders into the container — the only host paths a HA add-on is able to expose — and the two toggles control whether BamBuddy is allowed to register them:
+BamBuddy's File Manager can mount external host folders (NAS shares, USB drives, etc.) without copying files into its own library. This add-on mounts Home Assistant's `/share` and `/media` folders into the container — the only host paths a HA add-on is able to expose.
 
-1. Make sure the folder you want to expose is reachable under HA's own `/share` or `/media` (e.g. via the Samba/File Editor add-ons, or a network share already configured in Home Assistant).
-2. Enable `enable_share` and/or `enable_media` in the add-on configuration.
+`share_subfolder` and `media_subfolder` scope BamBuddy's access to a **specific subfolder** of `/share` or `/media`, rather than the whole tree. This matters because `/share` and `/media` are shared by every App and integration on your HA instance — granting BamBuddy the entire folder would let it see (and, if writable, modify) files belonging to unrelated Apps. There is intentionally no option to expose the whole folder.
+
+1. Decide where your files should live, e.g. `/share/bambuddy`, and make that folder reachable under HA's own `/share` or `/media` (e.g. via the Samba/File Editor add-ons, or a network share already configured in Home Assistant). The add-on will also create the subfolder automatically on first start if it doesn't already exist.
+2. Set `share_subfolder` and/or `media_subfolder` to just the subfolder name — **without** a leading `/share/` or `/media/` (e.g. `bambuddy`, not `/share/bambuddy`).
 3. Restart the add-on.
-4. In BamBuddy, go to **File Manager → Add external folder** and enter `/share` or `/media`.
+4. In BamBuddy, go to **File Manager → Add external folder** and enter the full in-container path, e.g. `/share/bambuddy`.
 
 Folders outside `/share` and `/media` cannot be exposed by this add-on.
+
+> **Upgrading from `enable_share` / `enable_media` (pre-1.0.15):** those two booleans exposed the entire `/share` and/or `/media` folder and no longer exist. Your old setting is not carried over — fill in the new field after updating. If your files already lived in a subfolder (e.g. `/share/3dprints`), just enter that name (`3dprints`) and nothing else changes; only files kept directly in the root of `/share` or `/media` need moving into a subfolder first.
 
 ---
 
@@ -242,6 +246,16 @@ or
 ## Data persistence
 
 BamBuddy data (database, virtual printer certificates, logs) is stored in the HA Supervisor data volume and survives add-on updates and restarts.
+
+### BamBuddy backups (`/share/bambuddy_backups`)
+
+If you use BamBuddy's own backup feature, the resulting files are stored under `/share/bambuddy_backups` rather than inside the add-on's persistent data volume. This is deliberate: Home Assistant's own App/Supervisor backups snapshot the entire persistent data volume, so a BamBuddy backup stored *inside* that volume would get bundled into every subsequent HA backup — including all previous BamBuddy backups still sitting there — growing the HA backup file without bound.
+
+`/share` is never included in HA's own backups by default, so this keeps the two backup systems independent: back up BamBuddy from within BamBuddy, and back up Home Assistant (config, other Apps) with HA's own backup feature, without either one duplicating the other's data.
+
+If you were running a version before 1.0.15, any backups already present in the old location are **moved** here the first time you start 1.0.15 — copied first, verified file by file, and only then removed from the data volume. Leaving a second copy behind would keep inflating your HA backups, which is exactly what this change avoids, so nothing is left over and there's nothing for you to clean up.
+
+If the migration can't be verified (a failed copy, a full disk, a read-only `/share`), nothing is deleted: the originals stay put under `backups.not-migrated` and the App log shows an error. That folder is *not* removed automatically and will keep bloating your HA backups until you deal with it — see the 1.0.15 entry in [CHANGELOG.md](CHANGELOG.md) for step-by-step cleanup instructions.
 
 ---
 
