@@ -35,6 +35,12 @@ body:
             This is about installing, updating, or configuring the InfluxDB App itself
             (not about InfluxDB's own query/UI/task-engine behavior once it's running).
           required: true
+        - label: I have read the App's README/DOCS.md before opening this issue.
+          required: true
+        - label: >-
+            I have checked existing issues (including closed ones) to make sure
+            this isn't a duplicate.
+          required: true
         - label: |
             I confirm that I did not actually read any of the points above and just checked them all. |
             I didn't want to waste time on details, so I skipped reading or following any existing instructions. |

@@ -1,0 +1,58 @@
+name: Bambu Studio API App — Feature Request
+description: Suggest an idea for the Bambu Studio API App (the Home Assistant wrapper, not the slicer engine itself).
+labels: ["enhancement", "app:bambu-studio-api"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Before you continue
+
+        This repository only packages the Bambu Studio slicing engine to run as a Home
+        Assistant **App** (formerly called "Add-on") — it wires together Docker,
+        `config.yaml`, and the API layer. **It is not the slicer itself.**
+
+        If your idea is about slicing behavior, profiles, or slicer features, that
+        belongs upstream with the slicer engine, not this App wrapper.
+
+  - type: checkboxes
+    id: confirm-scope
+    attributes:
+      label: Confirm this request belongs here
+      options:
+        - label: >-
+            I am aware that naked-head is a grumpy maintainer, so it can happen that
+            my issue will be closed quickly when essential information is missing
+            (no description, no use case, etc.).
+          required: true
+        - label: >-
+            This is about the Bambu Studio API App itself (packaging, configuration,
+            HA integration) — not about slicer features or slicing behavior.
+          required: true
+        - label: I have read the App's README/DOCS.md and this isn't already covered.
+          required: true
+        - label: >-
+            I have checked existing issues (including closed ones) to make sure
+            this isn't a duplicate request.
+          required: true
+        - label: |
+            I confirm that I did not actually read any of the points above and just checked them all. |
+            I didn't want to waste time on details, so I skipped reading or following any existing instructions. |
+            Instead, I'd like naked-head to spend their free time explaining things to me — that's what open source is for, right? |
+            I live by the motto: better to ask twice than think once. |
+            It's naked-head's own fault for offering open-source software and free support.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the feature
+      description: What would you like to see, and why?
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Use case
+      description: What problem does this solve for you? How would you use it?
+    validations:
+      required: true
