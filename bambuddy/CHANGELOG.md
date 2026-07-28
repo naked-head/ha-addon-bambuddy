@@ -5,6 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.0.16]
+
+### Changed
+- **⚠️ Breaking change — `share_subfolder` / `media_subfolder` are now lists, renamed `share_subfolders` / `media_subfolders`.** They were introduced one release ago as single text fields; making them lists means you can expose more than one folder per root, and matches how `trusted_frame_origins` already works. Sorry for two config changes in as many days.
+  - **Migration:** if you set a value in 1.0.15, re-enter it as a list entry after updating. Coming from 1.0.14 or earlier, see the 1.0.15 entry below — the guidance there still applies, just add list entries instead of filling a single field.
+  - Entries are sanitised before use: a `..` segment is rejected, a redundant `/share/` or `/media/` prefix is now **stripped** rather than used verbatim (1.0.15 warned but still produced `/share/share/...`), and a bare `/share` or `/media` is refused, since exposing a whole root is exactly what these options exist to prevent.
+- Both options now appear in the App's main configuration instead of under "unused optional configuration options", so the feature is discoverable without hunting for it.
+- `certfile` moved the other way, into the optional section — it only does anything when `use_system_trust_store` is on, and having it in the main list implied it was needed on every install.
+
 ## [1.0.15]
 
 ### Changed
@@ -162,7 +171,8 @@ Shortly after the 1.0.11 release, a bug was found in the automatic timezone dete
 - Configurable bind address for multi-IP setups (e.g. IP alias to avoid port conflicts)
 - Configurable timezone and log level
 
-[Unreleased]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.15...HEAD
+[Unreleased]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.16...HEAD
+[1.0.16]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.15...bambuddy-v1.0.16
 [1.0.15]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.14...bambuddy-v1.0.15
 [1.0.14]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.13...bambuddy-v1.0.14
 [1.0.13]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.12...bambuddy-v1.0.13

@@ -16,8 +16,8 @@ This app is part of the [`naked-head/homeassistant-addons`](https://github.com/n
 | `ha_url` | string | *(unset)* | URL of the Home Assistant instance BamBuddy talks to. Leave unset to use this Supervisor's own Core API automatically |
 | `ha_token` | password | *(unset)* | Long-lived access token for `ha_url`. Leave unset to use the Supervisor's own token automatically — only needed if `ha_url` points to a different, external HA instance |
 | `database_url` | password | *(unset)* | External PostgreSQL connection string, e.g. `postgresql+asyncpg://bambuddy:password@db-host:5432/bambuddy`. Leave unset to use BamBuddy's built-in SQLite database |
-| `share_subfolder` | string | *(unset)* | Subfolder under Home Assistant's `/share` to expose to BamBuddy's File Manager (e.g. `bambuddy`). Leave unset to disable. Do **not** include a leading `/share/` — just the subfolder name |
-| `media_subfolder` | string | *(unset)* | Subfolder under Home Assistant's `/media` to expose to BamBuddy's File Manager (e.g. `bambuddy`). Leave unset to disable. Do **not** include a leading `/media/` — just the subfolder name |
+| `share_subfolders` | list | *(empty)* | Subfolders under Home Assistant's `/share` to expose to BamBuddy's File Manager, one per entry (e.g. `bambuddy`). Enter just the subfolder name, without a leading `/share/`. Empty list disables the feature |
+| `media_subfolders` | list | *(empty)* | Subfolders under Home Assistant's `/media` to expose to BamBuddy's File Manager, one per entry (e.g. `bambuddy`). Enter just the subfolder name, without a leading `/media/`. Empty list disables the feature |
 | `use_system_trust_store` | boolean | `false` | Enable if BamBuddy needs to trust a self-signed certificate (e.g. a self-signed HA instance at `ha_url`) |
 | `certfile` | string | `custom_ca.crt` | Filename of the CA certificate to install, placed in this add-on's config folder. Only used when `use_system_trust_store` is enabled |
 | `enable_ipv6` | boolean | `false` | Bind on `::` instead of `0.0.0.0` for IPv6 reachability. **Opt-in and off by default** — see warning below |
@@ -36,212 +36,21 @@ This add-on runs with `homeassistant_api: true`, so on a normal HA Supervised/OS
 
 ---
 
-## External library folders (`share_subfolder` / `media_subfolder`)
+## External library folders (`share_subfolders` / `media_subfolders`)
 
-BamBuddy's File Manager can mount external host folders (NAS shares, USB drives, etc.) without copying files into its own library. This add-on mounts Home Assistant's `/share` and `/media` folders into the container — the only host paths a HA add-on is able to expose.
+BamBuddy's File Manager can mount external host folders (NAS shares, USB drives, etc.) without copying files into its own library. This App mounts Home Assistant's `/share` and `/media` folders into the container — the only host paths a HA App is able to expose.
 
-`share_subfolder` and `media_subfolder` scope BamBuddy's access to a **specific subfolder** of `/share` or `/media`, rather than the whole tree. This matters because `/share` and `/media` are shared by every App and integration on your HA instance — granting BamBuddy the entire folder would let it see (and, if writable, modify) files belonging to unrelated Apps. There is intentionally no option to expose the whole folder.
+`share_subfolders` and `media_subfolders` scope BamBuddy's access to **named subfolders** of `/share` or `/media`, rather than the whole tree. This matters because `/share` and `/media` are shared by every App and integration on your HA instance — granting BamBuddy the entire folder would let it see (and, if writable, modify) files belonging to unrelated Apps. There is intentionally no option to expose a whole folder.
 
-1. Decide where your files should live, e.g. `/share/bambuddy`, and make that folder reachable under HA's own `/share` or `/media` (e.g. via the Samba/File Editor add-ons, or a network share already configured in Home Assistant). The add-on will also create the subfolder automatically on first start if it doesn't already exist.
-2. Set `share_subfolder` and/or `media_subfolder` to just the subfolder name — **without** a leading `/share/` or `/media/` (e.g. `bambuddy`, not `/share/bambuddy`).
-3. Restart the add-on.
-4. In BamBuddy, go to **File Manager → Add external folder** and enter the full in-container path, e.g. `/share/bambuddy`.
+1. Add one entry per subfolder you want BamBuddy to reach, using just the folder name — **without** a leading `/share/` or `/media/`. For example `bambuddy`, or `3dprints` if you already keep files in `/share/3dprints`.
+2. Restart the App. Each folder is created automatically if it doesn't already exist, so you can point BamBuddy at a new folder and populate it afterwards (e.g. via the Samba or File Editor Apps).
+3. In BamBuddy, go to **File Manager → Add external folder** and enter the full in-container path, e.g. `/share/bambuddy`.
 
-Folders outside `/share` and `/media` cannot be exposed by this add-on.
+Entries are sanitised before use: a `..` segment is rejected outright, a redundant `/share/` or `/media/` prefix is stripped with a warning in the log, and a bare `/share` or `/media` is refused. Folders outside `/share` and `/media` cannot be exposed by this App at all.
 
-> **Upgrading from `enable_share` / `enable_media` (pre-1.0.15):** those two booleans exposed the entire `/share` and/or `/media` folder and no longer exist. Your old setting is not carried over — fill in the new field after updating. If your files already lived in a subfolder (e.g. `/share/3dprints`), just enter that name (`3dprints`) and nothing else changes; only files kept directly in the root of `/share` or `/media` need moving into a subfolder first.
-
----
-
-## External PostgreSQL database (`database_url`)
-
-By default BamBuddy stores everything in a SQLite database under the add-on's persistent data volume. If you'd rather point it at an external PostgreSQL server, set `database_url` (e.g. `postgresql+asyncpg://bambuddy:yourpassword@db-host:5432/bambuddy`). BamBuddy creates all tables automatically on first startup; backup/restore then uses `pg_dump`/`pg_restore` instead of a file copy.
-
----
-
-## Self-signed certificates (`use_system_trust_store` / `certfile`)
-
-If BamBuddy needs to validate a self-signed certificate — for example when `ha_url` points to a Home Assistant instance reachable only over a self-signed HTTPS certificate — you can install that CA certificate into the add-on's trust store:
-
-1. Place your CA certificate (`.crt` file) in this add-on's config folder (`addon_configs/<slug>_bambuddy/`, accessible via the File Editor add-on).
-2. Set `certfile` to the exact filename (default: `custom_ca.crt`).
-3. Enable `use_system_trust_store`.
-4. Restart the add-on.
-
-If the certificate file isn't found at startup, the add-on logs a warning and leaves the system trust store disabled rather than failing silently.
-
----
-
-## Ports
-
-| Port | Protocol | Description |
-|---|---|---|
-| 8000 | TCP | BamBuddy Web UI |
-| 3000 | TCP | Slicer bind/detect handshake |
-| 3002 | TCP | Slicer bind/detect handshake (alt) |
-| 2021 | UDP | SSDP printer discovery |
-| 8883 | TCP | MQTT over TLS (Virtual Printer) |
-| 6000 | TCP | File transfer tunnel |
-| 322 | TCP | RTSP camera streaming (X1/H2/P2) |
-| 990 | TCP | FTPS control |
-| 2024-2026 | TCP | Proprietary slicer ports (A1/P1S) |
-| 50000-50029 | TCP | FTP passive data |
-
-> **Note:** Port 8883 is also used by MQTT brokers. If you already run Mosquitto or another broker on this port, configure a separate IP alias on your network interface and set `bind_address` to that alias.
-
----
-
-## Add BamBuddy to the Home Assistant sidebar
-
-BamBuddy's web interface cannot be embedded via HA Ingress due to SPA architecture constraints. You can add it as a Webpage dashboard panel instead.
-
-> **How iframe embedding works:** the Webpage panel loads BamBuddy in an iframe directly in the user's browser. This means the browser must be able to reach BamBuddy directly — Home Assistant only acts as a visual container, not as a proxy. This has an important implication: if you access HA via HTTPS from outside your network, the browser will block an HTTP iframe due to mixed content policy.
-
-### Option 1 — Local HTTP access
-
-If you access Home Assistant via HTTP on your local network:
-
-1. Add your HA URL as an entry in `trusted_frame_origins` in the add-on configuration (e.g. `http://192.168.1.100:8123`).
-2. Restart the add-on.
-3. Go to **Settings → Dashboards**.
-4. Click **Add Dashboard** → **Webpage**.
-5. Fill in:
-   - **Title**: `BamBuddy`
-   - **Icon**: `mdi:printer-3d`
-   - **URL**: `http://<your-ha-ip>:8000`
-6. Click **Create**.
-
-### Option 2 — HTTPS access via Cloudflare Tunnel
-
-If you access Home Assistant via HTTPS and expose BamBuddy through a Cloudflare Tunnel:
-
-#### Step 1 — Create a Cloudflare Transform Rule
-
-1. Go to **Cloudflare Dashboard → your domain → Rules → Overview**.
-2. Click **Create rule** and select **Response Header Transform Rule**.
-3. Give the rule a name (e.g. `BamBuddy iframe`).
-4. Configure the rule:
-
-**When incoming requests match:**
-- Field: `Hostname`
-- Operator: `equals`
-- Value: `bambuddy.yourdomain.com`
-
-**Then modify response header:**
-- Operation: `Set`
-- Header name: `Content-Security-Policy`
-- Value: `frame-ancestors 'self' https://your-ha-domain.com`
-
-Replace `https://your-ha-domain.com` with the URL you use to access Home Assistant.
-
-5. Click **Deploy**.
-
-#### Step 2 — Add BamBuddy to the sidebar
-
-1. Go to **Settings → Dashboards**.
-2. Click **Add Dashboard** → **Webpage**.
-3. Fill in:
-   - **Title**: `BamBuddy`
-   - **Icon**: `mdi:printer-3d`
-   - **URL**: `https://bambuddy.yourdomain.com`
-4. Click **Create**.
-
-### Option 3 — HTTPS access via local Nginx reverse proxy
-
-If you want to serve BamBuddy over HTTPS on your local network without exposing it publicly, you can put Nginx in front of BamBuddy with a self-signed certificate.
-
-#### Step 1 — Install Nginx
-
-Install Nginx on your Home Assistant host or on another machine on the LAN. The [Nginx Proxy Manager](https://nginxproxymanager.com/) add-on for Home Assistant is a convenient option.
-
-#### Step 2 — Configure Nginx
-
-Create a server block that proxies BamBuddy and overrides the CSP header:
-
-```nginx
-server {
-    listen 443 ssl;
-    server_name bambuddy.local;
-
-    ssl_certificate     /path/to/cert.pem;
-    ssl_certificate_key /path/to/key.pem;
-
-    location / {
-        proxy_pass http://127.0.0.1:8000;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
-
-        # Override BamBuddy's CSP to allow HA to embed it in an iframe
-        proxy_hide_header Content-Security-Policy;
-        add_header Content-Security-Policy "frame-ancestors 'self' https://your-ha-domain.com;";
-    }
-}
-```
-
-Replace `your-ha-domain.com` with the URL you use to access Home Assistant.
-
-#### Step 3 — Add BamBuddy to the sidebar
-
-1. Go to **Settings → Dashboards**.
-2. Click **Add Dashboard** → **Webpage**.
-3. Fill in:
-   - **Title**: `BamBuddy`
-   - **Icon**: `mdi:printer-3d`
-   - **URL**: `https://bambuddy.local`
-4. Click **Create**.
-
-> **Note:** If you use a self-signed certificate, your browser may require you to manually accept it by visiting `https://bambuddy.local` once before the iframe loads correctly in HA.
-
-### Option 4 — Remote access via VPN
-
-If you want to access BamBuddy from outside your network without exposing it publicly, use a VPN such as [WireGuard](https://www.wireguard.com/) or [Tailscale](https://tailscale.com/). Both are available as Home Assistant add-ons.
-
-Once connected to the VPN, your remote device is on the LAN and can reach BamBuddy via HTTP as if you were home — use Option 1 in this case.
-
----
-
-## Virtual Printer setup
-
-### Step 1 — Create a virtual printer in BamBuddy
-
-1. Open BamBuddy at `http://<your-ha-ip>:8000`.
-2. Go to **Virtual Printers** and create a new printer.
-3. Note the IP, serial number and access code assigned to the virtual printer.
-
-### Step 2 — Download the CA certificate
-
-1. In BamBuddy go to **Settings → Virtual Printer**.
-2. Download the **CA Certificate** (`bbl_ca.crt`).
-
-### Step 3 — Add the certificate to BambuStudio
-
-Append the contents of `bbl_ca.crt` to the slicer certificate file.
-
-**Standard installation:**
-```
-<BambuStudio install path>/resources/cert/printer.cer
-```
-
-**Flatpak installation:**
-```
-/var/lib/flatpak/app/com.bambulab.BambuStudio/current/active/files/share/BambuStudio/resources/cert/printer.cer
-```
-or
-```
-/var/lib/flatpak/app/com.bambulab.BambuStudio/current/active/files/share/BambuStudio/cert/printer.cer
-```
-
-> **Note:** Updating BambuStudio via Flatpak overwrites `printer.cer` — you will need to re-add the certificate after each update.
-
-### Step 4 — Add the virtual printer in BambuStudio
-
-1. In BambuStudio go to **Device → Add Printer**.
-2. Select **Add a new Bambu Lab printer**.
-3. Enter the IP, serial number and access code from Step 1.
-
----
+> **Upgrading from 1.0.15:** `share_subfolder`/`media_subfolder` were single text fields; they are now lists named `share_subfolders`/`media_subfolders`. Re-enter your folder name as a list entry after updating.
+>
+> **Upgrading from 1.0.14 or earlier:** the `enable_share`/`enable_media` booleans exposed the entire `/share` and/or `/media` folder and no longer exist. Your old setting is not carried over — add a list entry after updating. If your files already lived in a subfolder (e.g. `/share/3dprints`), just enter that name (`3dprints`) and nothing else changes; only files kept directly in the root of `/share` or `/media` need moving into a subfolder first.
 
 ## Data persistence
 
