@@ -1,25 +1,5 @@
 name: Bambu Studio API App — Bug Report
 description: Problem installing, updating, or configuring the Bambu Studio API App for Home Assistant.
-labels: ["bug", "app:bambu-studio-api"]
-body:
-  - type: markdown
-    attributes:
-      value: |
-        ## Before you continue
-
-        This repository only packages the Bambu Studio slicing engine to run as a Home
-        Assistant **App** (formerly called "Add-on") — it wires together Docker,
-        `config.yaml`, and the API layer. **It is not the slicer itself.**
-
-        If your problem is about slicing results, slicer behavior, or profile handling,
-        that's the underlying slicer engine, not this App wrapper.
-
-  - type: checkboxes
-    id: confirm-scope
-    attributes:
-      label: Confirm this issue belongs here
-      options:name: Bambu Studio API App — Bug Report
-description: Problem installing, updating, or configuring the Bambu Studio API App for Home Assistant.
 labels: ["app:bambu-studio-api"]
 body:
   - type: markdown
@@ -67,71 +47,6 @@ body:
         - label: >-
             I confirm this is genuinely an issue with the App (not just a question
             about how a feature works).
-          required: true
-        - label: |
-            I confirm that I did not actually read any of the points above and just checked them all. |
-            I didn't want to waste time on details, so I skipped reading or following any existing instructions. |
-            Instead, I'd like naked-head to spend their free time explaining things to me — that's what open source is for, right? |
-            I live by the motto: better to ask twice than think once. |
-            It's naked-head's own fault for offering open-source software and free support.
-
-  - type: input
-    id: app-version
-    attributes:
-      label: Bambu Studio API App version
-      description: Settings → Apps → Bambu Studio API → top of page.
-      placeholder: e.g. 1.0.3
-    validations:
-      required: true
-
-  - type: dropdown
-    id: ha-install
-    attributes:
-      label: Home Assistant installation type
-      options:
-        - Home Assistant OS
-        - Home Assistant Supervised
-        - Other / not sure
-    validations:
-      required: true
-
-  - type: textarea
-    id: description
-    attributes:
-      label: What happened?
-      description: What did you expect, and what happened instead?
-    validations:
-      required: true
-
-  - type: textarea
-    id: config
-    attributes:
-      label: App configuration (YAML)
-      description: >-
-        Settings → Apps → Bambu Studio API → Configuration tab → switch to YAML mode
-        and paste it here. Remove/redact tokens, passwords, and external URLs first.
-      render: yaml
-
-  - type: textarea
-    id: logs
-    attributes:
-      label: App logs
-      description: Settings → Apps → Bambu Studio API → Log tab. Please redact anything sensitive.
-      render: shell
-        - label: >-
-            I am aware that naked-head is a grumpy maintainer, so it can happen that
-            my issue will be closed quickly when essential information is missing
-            (no logs, no description, no steps to reproduce, etc.).
-          required: true
-        - label: >-
-            This is about installing, updating, or configuring the Bambu Studio API
-            App itself (not about slicing results or slicer behavior).
-          required: true
-        - label: I have read the App's README/DOCS.md before opening this issue.
-          required: true
-        - label: >-
-            I have checked existing issues (including closed ones) to make sure
-            this isn't a duplicate.
           required: true
         - label: |
             I confirm that I did not actually read any of the points above and just checked them all. |
