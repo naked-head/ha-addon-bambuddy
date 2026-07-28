@@ -1,26 +1,26 @@
-name: BamBuddy App — Feature Request
-description: Suggest an idea for the BamBuddy App (the Home Assistant wrapper, not BamBuddy itself).
-labels: ["enhancement", "app:bambuddy"]
+name: InfluxDB App — Feature Request
+description: Suggest an idea for the InfluxDB App (the Home Assistant wrapper, not InfluxDB itself).
+labels: ["enhancement", "app:influxdb"]
 body:
   - type: markdown
     attributes:
       value: |
         ## Before you continue
 
-        This repository only packages BamBuddy to run as a Home Assistant **App**
-        (formerly called "Add-on") — it wires together Docker, `config.yaml`, and the
-        HA Supervisor integration. **It is not BamBuddy itself.**
+        This repository only packages InfluxDB OSS to run as a Home Assistant
+        **App** (formerly called "Add-on") — it wires together Docker, s6-overlay,
+        `config.yaml`, and the Supervisor integration. **It is not InfluxDB itself.**
 
-        If your idea is about how BamBuddy *behaves* — print queue logic, plate
-        detection, printer connection, notifications, UI features, etc. — please
-        request it upstream instead, where the actual maintainer can act on it:
+        If your idea is about InfluxDB's own features — query language, the Web UI,
+        dashboards, task/alert engine, client libraries, etc. — please request it
+        upstream instead, where the actual maintainers can act on it:
 
-        👉 https://github.com/maziggy/bambuddy/issues/new/choose
+        👉 https://github.com/influxdata/influxdb/issues
 
-        Requests about application features opened here will be redirected and closed,
-        which just delays getting help. Rule of thumb: if it's about what BamBuddy does
-        once running, it's upstream; if it's about how the App packages/exposes it to
-        Home Assistant, it's here.
+        Requests about InfluxDB's own features opened here will be redirected and
+        closed, which just delays getting help. Rule of thumb: if it's about what
+        InfluxDB does once running, it's upstream; if it's about how the App
+        packages/exposes it to Home Assistant, it's here.
 
   - type: checkboxes
     id: confirm-scope
@@ -33,8 +33,8 @@ body:
             (no description, no use case, etc.).
           required: true
         - label: >-
-            This is about the BamBuddy App itself (packaging, configuration, HA
-            integration) — not about BamBuddy's behavior once it's running.
+            This is about the InfluxDB App itself (packaging, configuration, HA
+            integration) — not about InfluxDB's own query/UI/task-engine features.
           required: true
         - label: I have read the App's README/DOCS.md and this isn't already covered.
           required: true
