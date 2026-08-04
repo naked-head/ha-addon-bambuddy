@@ -69,7 +69,7 @@ for f in scenarios/*.json; do
     full)
       grep -q 'Trusted frame origins: http://ha.test:8123,https://example.com' <<<"$L" \
         || { echo "  ✘ trusted_frame_origins not applied"; FAIL=1; }
-      grep -q 'External roots: /share/bambuddy:/media/bambuddy' <<<"$L" \
+      grep -q 'External roots: /share/bambuddy:/share/3dprints:/media/bambuddy' <<<"$L" \
         || { echo "  ✘ external roots not applied"; FAIL=1; }
       grep -q 'Home Assistant URL: http://127.0.0.1:1' <<<"$L" \
         || { echo "  ✘ ha_url not applied"; FAIL=1; }

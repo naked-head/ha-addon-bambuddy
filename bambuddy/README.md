@@ -45,7 +45,7 @@ This app is part of the [`naked-head/homeassistant-addons`](https://github.com/n
 | `trusted_frame_origins` | `[]` | Origins allowed to embed BamBuddy in an iframe — one entry per line, `scheme://host[:port]`, e.g. `http://192.168.1.100:8123` |
 | `ha_url` / `ha_token` | *(unset)* | Point BamBuddy at a Home Assistant instance. Leave unset to auto-use this Supervisor's own Core API (also used to auto-detect the timezone) |
 | `database_url` | *(unset)* | External PostgreSQL connection string. Leave unset to use the built-in SQLite database |
-| `share_subfolder` / `media_subfolder` | *(unset)* | Expose a specific subfolder of HA's `/share` and/or `/media` (e.g. `bambuddy`) as a File Manager external folder — not the whole folder |
+| `share_subfolders` / `media_subfolders` | *(empty)* | Subfolders of HA's `/share` and/or `/media` (e.g. `bambuddy`) to expose as File Manager external folders — never the whole folder |
 | `use_system_trust_store` / `certfile` | `false` / `custom_ca.crt` | Trust a self-signed certificate placed in the add-on's config folder |
 | `enable_ipv6` | `false` | Bind on `::` for IPv6 reachability. Opt-in — can make BamBuddy unreachable on some systems, see [DOCS.md](DOCS.md) |
 

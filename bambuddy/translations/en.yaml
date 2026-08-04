@@ -39,26 +39,26 @@ configuration:
       Optional external PostgreSQL connection string (e.g.
       postgresql+asyncpg://bambuddy:password@db-host:5432/bambuddy). Leave
       empty to use BamBuddy's built-in SQLite database.
-  share_subfolder:
-    name: Share Subfolder
+  share_subfolders:
+    name: Share Subfolders
     description: >-
-      Example: "bambuddy" exposes /share/bambuddy. Name of a subfolder under
-      Home Assistant's /share to expose to BamBuddy's File Manager as an
-      external library folder. Enter just the subfolder name, without a
-      leading /share/. The folder is created automatically on start if it
-      doesn't exist. Leave empty to disable. There is no option to expose
-      the whole /share folder, since it's shared by every App on this Home
-      Assistant instance.
-  media_subfolder:
-    name: Media Subfolder
+      Subfolders under Home Assistant's /share to expose to BamBuddy's File
+      Manager as external library folders — one entry per line, e.g.
+      "bambuddy" exposes /share/bambuddy. Enter just the subfolder name,
+      without a leading /share/. Each folder is created automatically on
+      start if it doesn't exist. Leave the list empty to disable. The whole
+      /share folder cannot be exposed, since it's shared by every App on
+      this Home Assistant instance.
+  media_subfolders:
+    name: Media Subfolders
     description: >-
-      Example: "bambuddy" exposes /media/bambuddy. Name of a subfolder under
-      Home Assistant's /media to expose to BamBuddy's File Manager as an
-      external library folder. Enter just the subfolder name, without a
-      leading /media/. The folder is created automatically on start if it
-      doesn't exist. Leave empty to disable. There is no option to expose
-      the whole /media folder, since it's shared by every App on this Home
-      Assistant instance.
+      Subfolders under Home Assistant's /media to expose to BamBuddy's File
+      Manager as external library folders — one entry per line, e.g.
+      "bambuddy" exposes /media/bambuddy. Enter just the subfolder name,
+      without a leading /media/. Each folder is created automatically on
+      start if it doesn't exist. Leave the list empty to disable. The whole
+      /media folder cannot be exposed, since it's shared by every App on
+      this Home Assistant instance.
   use_system_trust_store:
     name: Use System Trust Store
     description: >-

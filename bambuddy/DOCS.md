@@ -16,8 +16,8 @@ This app is part of the [`naked-head/homeassistant-addons`](https://github.com/n
 | `ha_url` | string | *(unset)* | URL of the Home Assistant instance BamBuddy talks to. Leave unset to use this Supervisor's own Core API automatically |
 | `ha_token` | password | *(unset)* | Long-lived access token for `ha_url`. Leave unset to use the Supervisor's own token automatically — only needed if `ha_url` points to a different, external HA instance |
 | `database_url` | password | *(unset)* | External PostgreSQL connection string, e.g. `postgresql+asyncpg://bambuddy:password@db-host:5432/bambuddy`. Leave unset to use BamBuddy's built-in SQLite database |
-| `share_subfolder` | string | *(unset)* | Subfolder under Home Assistant's `/share` to expose to BamBuddy's File Manager (e.g. `bambuddy`). Leave unset to disable. Do **not** include a leading `/share/` — just the subfolder name |
-| `media_subfolder` | string | *(unset)* | Subfolder under Home Assistant's `/media` to expose to BamBuddy's File Manager (e.g. `bambuddy`). Leave unset to disable. Do **not** include a leading `/media/` — just the subfolder name |
+| `share_subfolders` | list | *(empty)* | Subfolders under Home Assistant's `/share` to expose to BamBuddy's File Manager, one per entry (e.g. `bambuddy`). Enter just the subfolder name, without a leading `/share/`. Empty list disables the feature |
+| `media_subfolders` | list | *(empty)* | Subfolders under Home Assistant's `/media` to expose to BamBuddy's File Manager, one per entry (e.g. `bambuddy`). Enter just the subfolder name, without a leading `/media/`. Empty list disables the feature |
 | `use_system_trust_store` | boolean | `false` | Enable if BamBuddy needs to trust a self-signed certificate (e.g. a self-signed HA instance at `ha_url`) |
 | `certfile` | string | `custom_ca.crt` | Filename of the CA certificate to install, placed in this add-on's config folder. Only used when `use_system_trust_store` is enabled |
 | `enable_ipv6` | boolean | `false` | Bind on `::` instead of `0.0.0.0` for IPv6 reachability. **Opt-in and off by default** — see warning below |
@@ -36,20 +36,21 @@ This add-on runs with `homeassistant_api: true`, so on a normal HA Supervised/OS
 
 ---
 
-## External library folders (`share_subfolder` / `media_subfolder`)
+## External library folders (`share_subfolders` / `media_subfolders`)
 
-BamBuddy's File Manager can mount external host folders (NAS shares, USB drives, etc.) without copying files into its own library. This add-on mounts Home Assistant's `/share` and `/media` folders into the container — the only host paths a HA add-on is able to expose.
+BamBuddy's File Manager can mount external host folders (NAS shares, USB drives, etc.) without copying files into its own library. This App mounts Home Assistant's `/share` and `/media` folders into the container — the only host paths a HA App is able to expose.
 
-`share_subfolder` and `media_subfolder` scope BamBuddy's access to a **specific subfolder** of `/share` or `/media`, rather than the whole tree. This matters because `/share` and `/media` are shared by every App and integration on your HA instance — granting BamBuddy the entire folder would let it see (and, if writable, modify) files belonging to unrelated Apps. There is intentionally no option to expose the whole folder.
+`share_subfolders` and `media_subfolders` scope BamBuddy's access to **named subfolders** of `/share` or `/media`, rather than the whole tree. This matters because `/share` and `/media` are shared by every App and integration on your HA instance — granting BamBuddy the entire folder would let it see (and, if writable, modify) files belonging to unrelated Apps. There is intentionally no option to expose a whole folder.
 
-1. Decide where your files should live, e.g. `/share/bambuddy`, and make that folder reachable under HA's own `/share` or `/media` (e.g. via the Samba/File Editor add-ons, or a network share already configured in Home Assistant). The add-on will also create the subfolder automatically on first start if it doesn't already exist.
-2. Set `share_subfolder` and/or `media_subfolder` to just the subfolder name — **without** a leading `/share/` or `/media/` (e.g. `bambuddy`, not `/share/bambuddy`).
-3. Restart the add-on.
-4. In BamBuddy, go to **File Manager → Add external folder** and enter the full in-container path, e.g. `/share/bambuddy`.
+1. Add one entry per subfolder you want BamBuddy to reach, using just the folder name — **without** a leading `/share/` or `/media/`. For example `bambuddy`, or `3dprints` if you already keep files in `/share/3dprints`.
+2. Restart the App. Each folder is created automatically if it doesn't already exist, so you can point BamBuddy at a new folder and populate it afterwards (e.g. via the Samba or File Editor Apps).
+3. In BamBuddy, go to **File Manager → Add external folder** and enter the full in-container path, e.g. `/share/bambuddy`.
 
-Folders outside `/share` and `/media` cannot be exposed by this add-on.
+Entries are sanitised before use: a `..` segment is rejected outright, a redundant `/share/` or `/media/` prefix is stripped with a warning in the log, and a bare `/share` or `/media` is refused. Folders outside `/share` and `/media` cannot be exposed by this App at all.
 
-> **Upgrading from `enable_share` / `enable_media` (pre-1.0.15):** those two booleans exposed the entire `/share` and/or `/media` folder and no longer exist. Your old setting is not carried over — fill in the new field after updating. If your files already lived in a subfolder (e.g. `/share/3dprints`), just enter that name (`3dprints`) and nothing else changes; only files kept directly in the root of `/share` or `/media` need moving into a subfolder first.
+> **Upgrading from 1.0.15:** `share_subfolder`/`media_subfolder` were single text fields; they are now lists named `share_subfolders`/`media_subfolders`. Re-enter your folder name as a list entry after updating.
+>
+> **Upgrading from 1.0.14 or earlier:** the `enable_share`/`enable_media` booleans exposed the entire `/share` and/or `/media` folder and no longer exist. Your old setting is not carried over — add a list entry after updating. If your files already lived in a subfolder (e.g. `/share/3dprints`), just enter that name (`3dprints`) and nothing else changes; only files kept directly in the root of `/share` or `/media` need moving into a subfolder first.
 
 ---
 

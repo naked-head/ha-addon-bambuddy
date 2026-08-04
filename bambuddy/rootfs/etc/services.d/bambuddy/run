@@ -106,52 +106,62 @@ if bashio::config.has_value 'database_url'; then
 fi
 
 # External storage (Share / Media). Mounted via config.yaml (share:rw, media:rw).
-# share_subfolder/media_subfolder scope BamBuddy's access to a specific
-# subfolder instead of the whole /share or /media tree, so it doesn't see
-# files belonging to other Apps. Leave unset to disable; leave set to "" is
-# treated as unset (no root granted) -- there is no "expose the whole
-# folder" option anymore, on purpose.
+# share_subfolders/media_subfolders scope BamBuddy's access to named subfolders
+# instead of the whole /share or /media tree, so it doesn't see files belonging
+# to other Apps. Empty list = no root granted; there is no "expose the whole
+# folder" option, on purpose.
 sanitize_subfolder() {
     # Strip leading/trailing slashes and reject any ".." path segment.
     # $2 is the root name ("share" or "media"), used only to warn if the
     # user redundantly typed it as a prefix (e.g. "/share/bambuddy" instead
-    # of just "bambuddy").
+    # of just "bambuddy"). bashio logs via LOG_FD, which survives the
+    # command substitution around this function, so warnings still reach
+    # the container log instead of the captured value.
     local raw="$1"
     local root_name="$2"
     local clean="${raw#/}"
     clean="${clean%/}"
     if [[ "${clean}" == *".."* ]]; then
-        bashio::log.warning "Ignoring ${root_name}_subfolder value with '..': ${raw}"
+        bashio::log.warning "Ignoring ${root_name} subfolder containing '..': ${raw}"
         echo ""
         return
     fi
-    if [[ "${clean}" == "${root_name}/"* ]] || [[ "${clean}" == "${root_name}" ]]; then
-        bashio::log.warning "${root_name}_subfolder should not include '${root_name}/' -- did you mean '${clean#"${root_name}"/}'? Using the value as given."
+    if [ "${clean}" = "${root_name}" ]; then
+        bashio::log.warning "Ignoring ${root_name} subfolder '${raw}': the whole /${root_name} folder cannot be exposed, name a subfolder inside it instead."
+        echo ""
+        return
+    fi
+    if [[ "${clean}" == "${root_name}/"* ]]; then
+        clean="${clean#"${root_name}"/}"
+        bashio::log.warning "Stripped redundant '/${root_name}/' prefix from '${raw}' -- using '${clean}'."
     fi
     echo "${clean}"
 }
 
 EXTERNAL_ROOTS=""
-if bashio::config.has_value 'share_subfolder'; then
-    SHARE_SUB=$(sanitize_subfolder "$(bashio::config 'share_subfolder')" "share")
-    if [ -n "${SHARE_SUB}" ]; then
-        mkdir -p "/share/${SHARE_SUB}"
-        bashio::log.info "Enabling /share/${SHARE_SUB} as external root"
-        EXTERNAL_ROOTS="/share/${SHARE_SUB}"
-    fi
-fi
-if bashio::config.has_value 'media_subfolder'; then
-    MEDIA_SUB=$(sanitize_subfolder "$(bashio::config 'media_subfolder')" "media")
-    if [ -n "${MEDIA_SUB}" ]; then
-        mkdir -p "/media/${MEDIA_SUB}"
-        bashio::log.info "Enabling /media/${MEDIA_SUB} as external root"
+add_external_roots() {
+    # $1 = option key (list), $2 = root name ("share" or "media").
+    # Appends every valid entry to EXTERNAL_ROOTS.
+    local key="$1"
+    local root_name="$2"
+    local entry clean
+    while IFS= read -r entry; do
+        [ -n "${entry}" ] || continue
+        clean=$(sanitize_subfolder "${entry}" "${root_name}")
+        [ -n "${clean}" ] || continue
+        mkdir -p "/${root_name}/${clean}"
+        bashio::log.info "Enabling /${root_name}/${clean} as external root"
         if [ -n "${EXTERNAL_ROOTS}" ]; then
-            EXTERNAL_ROOTS="${EXTERNAL_ROOTS}:/media/${MEDIA_SUB}"
+            EXTERNAL_ROOTS="${EXTERNAL_ROOTS}:/${root_name}/${clean}"
         else
-            EXTERNAL_ROOTS="/media/${MEDIA_SUB}"
+            EXTERNAL_ROOTS="/${root_name}/${clean}"
         fi
-    fi
-fi
+    done <<< "$(bashio::jq "/data/options.json" ".${key} // [] | .[]")"
+}
+
+add_external_roots 'share_subfolders' 'share'
+add_external_roots 'media_subfolders' 'media'
+
 if [ -n "${EXTERNAL_ROOTS}" ]; then
     export BAMBUDDY_EXTERNAL_ROOTS="${EXTERNAL_ROOTS}"
     bashio::log.info "External roots: ${EXTERNAL_ROOTS}"
