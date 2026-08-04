@@ -5,16 +5,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-## [1.0.16]
+## [1.0.16] - 2026-08-04
 
 ### Changed
-- **⚠️ Breaking change — `share_subfolder` / `media_subfolder` are now lists, renamed `share_subfolders` / `media_subfolders`.** They were introduced one release ago as single text fields; making them lists means you can expose more than one folder per root, and matches how `trusted_frame_origins` already works. Sorry for two config changes in as many days.
+- Updated BamBuddy to 1.2.5.2 (from 1.2.5.1). A maintenance release upstream, focused on the camera, timelapse and finish-photo pipeline and on the K-profile / Flow Dynamics screens, plus seven smaller features. No breaking changes. It adds two database columns (a per-virtual-printer AMS-mapping flag and a timelapse baseline on print archives), applied automatically on both SQLite and PostgreSQL at first start.
+
+  Full upstream release notes: https://github.com/maziggy/bambuddy/releases/tag/v1.2.5.2
+
+  If you are coming from 1.0.12 or earlier (BamBuddy 0.2.4.9), read the 1.0.13 entry below first — all of its upgrade callouts still apply to you.
+- **⚠️ Breaking change — `share_subfolder` / `media_subfolder` are now lists, renamed `share_subfolders` / `media_subfolders`.** They were introduced one release ago as single text fields; making them lists means you can expose more than one folder per root, and matches how `trusted_frame_origins` already works. Sorry for changing this option twice in short order.
   - **Migration:** if you set a value in 1.0.15, re-enter it as a list entry after updating. Coming from 1.0.14 or earlier, see the 1.0.15 entry below — the guidance there still applies, just add list entries instead of filling a single field.
   - Entries are sanitised before use: a `..` segment is rejected, a redundant `/share/` or `/media/` prefix is now **stripped** rather than used verbatim (1.0.15 warned but still produced `/share/share/...`), and a bare `/share` or `/media` is refused, since exposing a whole root is exactly what these options exist to prevent.
 - Both options now appear in the App's main configuration instead of under "unused optional configuration options", so the feature is discoverable without hunting for it.
 - `certfile` moved the other way, into the optional section — it only does anything when `use_system_trust_store` is on, and having it in the main list implied it was needed on every install.
 
-## [1.0.15]
+## [1.0.15] - 2026-07-28
 
 ### Changed
 - Updated BamBuddy to 1.2.5.1 (from 1.2.5). A bugfix-only upstream release — no new features, no breaking changes. It adds one database column (file modification times), applied automatically on both SQLite and PostgreSQL at first start.
@@ -43,7 +48,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
   If you'd rather keep those old backups, move them somewhere under `/share` or `/media` instead of deleting them — anywhere outside the App's data volume is fine.
 
-## [1.0.14]
+## [1.0.14] - 2026-07-25
 
 - Switched to pre-built images published on GHCR (amd64 + aarch64)
 - Install and update no longer compile the image locally, fixing out-of-memory hangs on low-RAM ARM boards (e.g. Raspberry Pi 4)
@@ -64,7 +69,7 @@ Behaviour changes worth knowing about before updating:
 - REST smart plugs (Shelly): if your Energy JSON Path points at a lifetime counter, move it to the new "Energy JSON Path (lifetime)" field.
 - Take a fresh backup after updating — backups made on older builds carry a degraded schema.
 
-## [1.0.12]
+## [1.0.12] - 2026-07-15
 
 - **Fixed a config upgrade issue**: `enable_share`, `enable_media`, and `certfile` (added in 1.0.11) were required fields in the schema, which broke saving the configuration for anyone who updated from 1.0.10 or earlier without those keys already present. They are now optional (`bool?`/`str?`); the App already handled their absence gracefully at runtime (features simply stay disabled), it was only the schema stopping the save. Applied the same fix preemptively to `enable_ipv6`, introduced below, for the same reason.
 - **Removed the Supervisor `watchdog`** added in 1.0.11. On at least one system it caused repeated false-positive restarts every ~2 minutes, unrelated to BamBuddy's actual health — traced to the health-check connection silently timing out rather than failing fast. Not worth the risk for the benefit it provided; may reconsider in the future with a more targeted implementation.
@@ -74,7 +79,7 @@ Behaviour changes worth knowing about before updating:
 
 Shortly after the 1.0.11 release, a bug was found in the automatic timezone detection: the code piped `curl`'s output into `bashio::jq`, but `bashio::jq` doesn't read from stdin — it crashed the App on every start (`jq: parse error: Invalid numeric literal at line 2, column 0`), triggering a restart loop. This was fixed directly on `main` without a version bump; if you installed or updated during that window and are still seeing this error, use **Repository → Check for updates** followed by **Rebuild** to pick up the fix, or update to 1.0.12.
 
-## [1.0.11]
+## [1.0.11] - 2026-07-14
 
 ### ⚠️ BREAKING CHANGES — action required after updating
 
@@ -110,11 +115,11 @@ Shortly after the 1.0.11 release, a bug was found in the automatic timezone dete
 
 **Full Changelog**: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.10...bambuddy-v1.0.11
 
-## [1.0.10]
+## [1.0.10] - 2026-07-12
 
 - Fixed a crash in `bambuddy_external_roots` handling: the `run` script called `bashio::addon_config`, which doesn't exist, instead of reading `/data/options.json` directly.
 
-## [1.0.9]
+## [1.0.9] - 2026-07-12
 
 - Fixed `trusted_frame_origins` disappearing from the UI editor after an add-on restart (removed empty-string default from `options`, kept it as a truly optional `schema` field). Applied the same fix to `bind_address`, which had the same latent issue.
 - Added `ha_url` / `ha_token` options for Home Assistant integration. Enabled `homeassistant_api: true` so both default automatically to the Supervisor's own Core API and token when left unset.
@@ -123,46 +128,46 @@ Shortly after the 1.0.11 release, a bug was found in the automatic timezone dete
 - Added `use_system_trust_store` option to trust self-signed certificates.
 - Pinned the upstream BamBuddy builder image to an explicit version tag (`BAMBUDDY_VERSION` build arg) instead of `:latest`, to guarantee the intended BamBuddy version is actually built regardless of Docker layer caching.
 
-## [1.0.8]
+## [1.0.8] - 2026-07-07
 
 - Updated BamBuddy to v0.2.4.9
 - Full release notes: https://github.com/maziggy/bambuddy/releases/tag/v0.2.4.9
 
-## [1.0.7]
+## [1.0.7] - 2026-06-28
 
 - Updated BamBuddy to v0.2.4.8
 - Full release notes: https://github.com/maziggy/bambuddy/releases/tag/v0.2.4.8
 
-## [1.0.6]
+## [1.0.6] - 2026-06-14
 
 - Updated BamBuddy to v0.2.4.7
 - Full release notes: https://github.com/maziggy/bambuddy/releases/tag/v0.2.4.7
 
-## [1.0.5]
+## [1.0.5] - 2026-06-09
 
 - Updated BamBuddy to v0.2.4.6
 - Narrowed FTP passive port range from 50000-50100 to 50000-50029
 - Full release notes: https://github.com/maziggy/bambuddy/releases/tag/v0.2.4.6
 
-## [1.0.4]
+## [1.0.4] - 2026-06-08
 
 - Added `trusted_frame_origins` configuration option for sidebar embedding without Cloudflare
 
-## [1.0.3]
+## [1.0.3] - 2026-06-03
 
 - Updated BamBuddy to v0.2.4.5
 - Full release notes: https://github.com/maziggy/bambuddy/releases/tag/v0.2.4.5
 
-## [1.0.2]
+## [1.0.2] - 2026-05-31
 
 - Updated BamBuddy to v0.2.4.4
 - Full release notes: https://github.com/maziggy/bambuddy/releases/tag/v0.2.4.4
 
-## [1.0.1]
+## [1.0.1] - 2026-05-26
 
 - Added Virtual Printer certificate instructions to README
 
-## [1.0.0]
+## [1.0.0] - 2026-05-26
 
 - Initial release of the Home Assistant add-on
 - Based on BamBuddy v0.2.4.3
