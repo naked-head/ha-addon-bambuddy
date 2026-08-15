@@ -5,6 +5,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.0.17] - 2026-08-15
+
+### Changed
+- Updated BamBuddy to 1.2.5.3 (from 1.2.5.2). A feature-and-fix release upstream, with 39 fixes and several new features. No breaking changes. It adds tables and columns, applied automatically on both SQLite and PostgreSQL at first start.
+
+  Full upstream release notes: https://github.com/maziggy/bambuddy/releases/tag/v1.2.5.3
+
+  If you are coming from 1.0.12 or earlier (BamBuddy 0.2.4.9), read the 1.0.13 entry below first — all of its upgrade callouts still apply to you.
+
+### Fixed
+- Dropped the `gcode_viewer` copy step from the image build: upstream replaced the vendored PrettyGCode viewer with libvgcode in 1.2.5.3, so the directory no longer exists and the build failed on it.
+
 ## [1.0.16] - 2026-08-04
 
 ### Changed
@@ -176,7 +188,8 @@ Shortly after the 1.0.11 release, a bug was found in the automatic timezone dete
 - Configurable bind address for multi-IP setups (e.g. IP alias to avoid port conflicts)
 - Configurable timezone and log level
 
-[Unreleased]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.16...HEAD
+[Unreleased]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.17...HEAD
+[1.0.17]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.16...bambuddy-v1.0.17
 [1.0.16]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.15...bambuddy-v1.0.16
 [1.0.15]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.14...bambuddy-v1.0.15
 [1.0.14]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.13...bambuddy-v1.0.14
