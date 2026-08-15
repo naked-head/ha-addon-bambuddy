@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.9 - 2026-08-15
+Bump Bambu Studio from 02.07.01.62 to 02.08.02.60.
+
+
 All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 

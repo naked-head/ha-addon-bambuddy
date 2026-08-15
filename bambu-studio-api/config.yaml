@@ -1,6 +1,6 @@
 # https://developers.home-assistant.io/docs/add-ons/configuration#add-on-config
 name: Bambu Studio API
-version: "0.1.8"
+version: "0.1.9"
 url: "https://github.com/naked-head/homeassistant-addons"
 slug: bambu_studio_api
 stage: stable
