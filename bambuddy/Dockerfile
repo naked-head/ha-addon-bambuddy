@@ -1,5 +1,5 @@
 ARG BUILD_FROM
-ARG BAMBUDDY_VERSION=1.2.5.2
+ARG BAMBUDDY_VERSION=1.2.5.3
 FROM ghcr.io/maziggy/bambuddy:${BAMBUDDY_VERSION} AS builder
 FROM ${BUILD_FROM}
 
@@ -25,7 +25,6 @@ RUN sed -i 's/opencv-python-headless/# opencv-python-headless/' requirements.txt
 # Copy application code only — explicitly exclude entrypoint and gosu
 COPY --from=builder /app/backend /app/backend
 COPY --from=builder /app/static /app/static
-COPY --from=builder /app/gcode_viewer /app/gcode_viewer
 
 ENV PYTHONUNBUFFERED=1
 ENV DATA_DIR=/app/data
