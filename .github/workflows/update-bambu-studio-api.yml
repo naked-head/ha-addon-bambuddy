@@ -50,7 +50,7 @@ jobs:
             echo "update_needed=false" >> $GITHUB_OUTPUT
           fi
 
-            - name: Update Dockerfile, config.yaml and CHANGELOG.md
+      - name: Update Dockerfile, config.yaml and CHANGELOG.md
         if: steps.compare.outputs.update_needed == 'true'
         run: |
           set -euo pipefail
