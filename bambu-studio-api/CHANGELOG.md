@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## 0.1.10 - 2026-08-21
+Bump Bambu Studio from 02.08.02.60 to 02.08.02.61.
+
 ## [0.1.9] - 2026-08-15
 Bump Bambu Studio from 02.07.01.62 to 02.08.02.60.
 
@@ -29,11 +32,6 @@ Bump Bambu Studio from 02.07.01.62 to 02.08.02.60.
 ## [0.1.3]
 - Fork from https://github.com/griffinmartin/ha-app-bambu-studio-api.
 
-[Unreleased]: https://github.com/naked-head/homeassistant-addons/compare/bambu-studio-api-v0.1.9...HEAD
-[0.1.9]: https://github.com/naked-head/homeassistant-addons/commits/main/bambu-studio-api
-[0.1.8]: https://github.com/naked-head/homeassistant-addons/commits/main/bambu-studio-api
-[0.1.7]: https://github.com/naked-head/homeassistant-addons/commits/main/bambu-studio-api
-[0.1.6]: https://github.com/naked-head/homeassistant-addons/commits/main/bambu-studio-api
-[0.1.5]: https://github.com/naked-head/homeassistant-addons/commits/main/bambu-studio-api
-[0.1.4]: https://github.com/naked-head/homeassistant-addons/commits/main/bambu-studio-api
-[0.1.3]: https://github.com/naked-head/homeassistant-addons/commits/main/bambu-studio-api
+[Unreleased]: https://github.com/naked-head/homeassistant-addons/compare/bambu-studio-api-v0.1.10...HEAD
+[0.1.10]: https://github.com/naked-head/homeassistant-addons/compare/bambu-studio-api-v0.1.9...bambu-studio-api-v0.1.10
+[0.1.9]: https://github.com/naked-head/homeassistant-addons/compare/bambu-studio-api-v0.1.8...bambu-studio-api-v0.1.9

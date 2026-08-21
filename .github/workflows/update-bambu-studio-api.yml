@@ -53,26 +53,37 @@ jobs:
       - name: Update Dockerfile, config.yaml and CHANGELOG.md
         if: steps.compare.outputs.update_needed == 'true'
         run: |
+          set -euo pipefail
           NEW_VER="${{ steps.upstream.outputs.version }}"
+          OLD_VER="${{ steps.current.outputs.version }}"
+          CL="bambu-studio-api/CHANGELOG.md"
+          REPO_URL="https://github.com/${{ github.repository }}"
 
           sed -i "s/ARG BAMBU_VERSION=.*/ARG BAMBU_VERSION=${NEW_VER}/" \
             bambu-studio-api/Dockerfile
 
-          CURRENT_ADDON=$(grep '^version:' bambu-studio-api/config.yaml \
+          OLD_ADDON=$(grep '^version:' bambu-studio-api/config.yaml \
             | sed -E 's/version:[[:space:]]*"?([^"]+)"?/\1/')
-          NEW_ADDON=$(echo "$CURRENT_ADDON" | awk -F. '{printf "%s.%s.%s", $1, $2, $3+1}')
+          NEW_ADDON=$(echo "$OLD_ADDON" | awk -F. '{printf "%s.%s.%s", $1, $2, $3+1}')
           sed -i "s/^version:.*/version: \"${NEW_ADDON}\"/" \
             bambu-studio-api/config.yaml
 
-          OLD_VER="${{ steps.current.outputs.version }}"
           DATE=$(date +%Y-%m-%d)
-          ADDON_VER=$(grep '^version:' bambu-studio-api/config.yaml \
-            | sed -E 's/version:[[:space:]]*"?([^"]+)"?/\1/')
 
-          ENTRY="## ${ADDON_VER} - ${DATE}\nBump Bambu Studio from ${OLD_VER} to ${NEW_VER}.\n"
-          FIRST=$(head -1 bambu-studio-api/CHANGELOG.md)
-          REST=$(tail -n +2 bambu-studio-api/CHANGELOG.md)
-          echo -e "${FIRST}\n\n${ENTRY}\n${REST}" > bambu-studio-api/CHANGELOG.md
+          # Insert the new section right after "## [Unreleased]"
+          awk -v ver="$NEW_ADDON" -v d="$DATE" -v old="$OLD_VER" -v new="$NEW_VER" '
+            { print }
+            /^## \[Unreleased\]$/ && !ins {
+              print ""
+              print "## [" ver "] - " d
+              print "- Bump Bambu Studio from " old " to " new "."
+              ins = 1
+            }
+          ' "$CL" > "$CL.tmp" && mv "$CL.tmp" "$CL"
+
+          # Refresh the link references at the bottom
+          sed -i "s|^\[Unreleased\]:.*|[Unreleased]: ${REPO_URL}/compare/bambu-studio-api-v${NEW_ADDON}...HEAD|" "$CL"
+          sed -i "/^\[Unreleased\]:/a [${NEW_ADDON}]: ${REPO_URL}/compare/bambu-studio-api-v${OLD_ADDON}...bambu-studio-api-v${NEW_ADDON}" "$CL"
 
       - name: Open Pull Request
         if: steps.compare.outputs.update_needed == 'true'
