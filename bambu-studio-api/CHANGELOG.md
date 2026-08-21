@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-## 0.1.10 - 2026-08-21
+## [0.1.10] - 2026-08-21
 Bump Bambu Studio from 02.08.02.60 to 02.08.02.61.
 
 ## [0.1.9] - 2026-08-15
