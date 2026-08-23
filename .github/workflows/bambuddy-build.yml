@@ -62,8 +62,6 @@ jobs:
           platforms: ${{ matrix.platform }}
           push: true
           provenance: false
-          build-args: |
-            BUILD_FROM=ghcr.io/home-assistant/${{ matrix.arch }}-base-python:3.13-alpine3.21
           tags: |
             ${{ steps.meta.outputs.image }}:${{ steps.meta.outputs.version }}
             ${{ steps.meta.outputs.image }}:latest

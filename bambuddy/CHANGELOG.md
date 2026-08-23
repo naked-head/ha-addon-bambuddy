@@ -5,6 +5,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.0.18] - 2026-08-23
+
+### Fixed
+- **Plate detection could not be enabled.** The toggle stayed off no matter what, on every version of this App since 1.0.0. The cause was in the image build, not in BamBuddy: the App installed OpenCV from Alpine's `py3-opencv` package, which targets the Alpine branch's own Python (3.12), while the application ran on the base image's Python 3.13. The module was there, just under an interpreter nothing used, and BamBuddy disables plate detection silently when `import cv2` fails. Fixes #9.
+
+  Nothing to do on your side — update and the toggle works. If you had turned on `Require plate clear` as a workaround, you can leave it on: it is a separate safety net and still worth having.
+
+### Changed
+- The image is now built on top of the official upstream BamBuddy image instead of a Home Assistant Alpine base, with the add-on supervision layer added on top. Practically: the Python environment is now byte-for-byte the one upstream builds and tests, instead of one reconstructed on a different C library. No configuration changes and no migration — your data, printers and settings are untouched.
+- Because the base image changed, the first update after this release re-downloads BamBuddy in full — roughly 500 MB over the wire, against a few megabytes for a normal version bump. On disk the App grows from about 1.6 GB to about 1.9 GB. Later updates go back to pulling only what changed.
+
 ## [1.0.17] - 2026-08-15
 
 ### Changed
@@ -188,7 +199,8 @@ Shortly after the 1.0.11 release, a bug was found in the automatic timezone dete
 - Configurable bind address for multi-IP setups (e.g. IP alias to avoid port conflicts)
 - Configurable timezone and log level
 
-[Unreleased]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.17...HEAD
+[Unreleased]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.18...HEAD
+[1.0.18]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.17...bambuddy-v1.0.18
 [1.0.17]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.16...bambuddy-v1.0.17
 [1.0.16]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.15...bambuddy-v1.0.16
 [1.0.15]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.14...bambuddy-v1.0.15

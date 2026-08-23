@@ -25,4 +25,4 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: pipx install yamllint
-      - run: yamllint bambuddy/config.yaml bambuddy/build.yaml bambu-studio-api/config.yaml influxdb/config.yaml
+      - run: yamllint bambuddy/config.yaml bambu-studio-api/config.yaml influxdb/config.yaml
