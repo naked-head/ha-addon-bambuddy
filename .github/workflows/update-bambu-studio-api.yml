@@ -2,7 +2,7 @@ name: Update Bambu Studio API
 
 on:
   schedule:
-    - cron: '0 6 * * *'  # ogni giorno alle 6:00 UTC
+    - cron: '0 6 * * *'  # every day at 06:00 UTC
   workflow_dispatch:
 
 jobs:
@@ -62,16 +62,16 @@ jobs:
           sed -i "s/ARG BAMBU_VERSION=.*/ARG BAMBU_VERSION=${NEW_VER}/" \
             bambu-studio-api/Dockerfile
 
-          OLD_ADDON=$(grep '^version:' bambu-studio-api/config.yaml \
+          OLD_APP=$(grep '^version:' bambu-studio-api/config.yaml \
             | sed -E 's/version:[[:space:]]*"?([^"]+)"?/\1/')
-          NEW_ADDON=$(echo "$OLD_ADDON" | awk -F. '{printf "%s.%s.%s", $1, $2, $3+1}')
-          sed -i "s/^version:.*/version: \"${NEW_ADDON}\"/" \
+          NEW_APP=$(echo "$OLD_APP" | awk -F. '{printf "%s.%s.%s", $1, $2, $3+1}')
+          sed -i "s/^version:.*/version: \"${NEW_APP}\"/" \
             bambu-studio-api/config.yaml
 
           DATE=$(date +%Y-%m-%d)
 
           # Insert the new section right after "## [Unreleased]"
-          awk -v ver="$NEW_ADDON" -v d="$DATE" -v old="$OLD_VER" -v new="$NEW_VER" '
+          awk -v ver="$NEW_APP" -v d="$DATE" -v old="$OLD_VER" -v new="$NEW_VER" '
             { print }
             /^## \[Unreleased\]$/ && !ins {
               print ""
@@ -82,8 +82,8 @@ jobs:
           ' "$CL" > "$CL.tmp" && mv "$CL.tmp" "$CL"
 
           # Refresh the link references at the bottom
-          sed -i "s|^\[Unreleased\]:.*|[Unreleased]: ${REPO_URL}/compare/bambu-studio-api-v${NEW_ADDON}...HEAD|" "$CL"
-          sed -i "/^\[Unreleased\]:/a [${NEW_ADDON}]: ${REPO_URL}/compare/bambu-studio-api-v${OLD_ADDON}...bambu-studio-api-v${NEW_ADDON}" "$CL"
+          sed -i "s|^\[Unreleased\]:.*|[Unreleased]: ${REPO_URL}/compare/bambu-studio-api-v${NEW_APP}...HEAD|" "$CL"
+          sed -i "/^\[Unreleased\]:/a [${NEW_APP}]: ${REPO_URL}/compare/bambu-studio-api-v${OLD_APP}...bambu-studio-api-v${NEW_APP}" "$CL"
 
       - name: Open Pull Request
         if: steps.compare.outputs.update_needed == 'true'
@@ -99,5 +99,5 @@ jobs:
             and `version` in `bambu-studio-api/config.yaml` to match the latest
             [BambuStudio release](https://github.com/bambulab/BambuStudio/releases/tag/${{ steps.upstream.outputs.version }}).
 
-            Merge this PR to make the update available in your HA add-on repository.
+            Merge this PR to make the update available in your HA App repository.
           labels: automated, dependencies

@@ -3,6 +3,7 @@ on:
   push:
     branches: [main]
   pull_request:
+    branches: [main]
 
 permissions:
   contents: read
@@ -26,8 +27,8 @@ jobs:
           push: false
           load: true
           tags: bsa:test
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=bambu-studio-api-amd64
+          cache-to: type=gha,mode=max,scope=bambu-studio-api-amd64
 
       - name: Build Supervisor mock
         run: docker build -t supervisor-mock test/mock/
