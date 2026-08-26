@@ -5,11 +5,11 @@ on:
       - main
     paths:
       - "bambu-studio-api/**"
-      - ".github/workflows/builder.yml"
+      - ".github/workflows/bambu-studio-api-build.yml"
   workflow_dispatch:
     inputs:
       version:
-        description: "Override add-on version (defaults to config.yaml)"
+        description: "Override app version (defaults to config.yaml)"
         required: false
 permissions:
   contents: read
@@ -21,7 +21,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Read add-on version from config.yaml
+      - name: Read app version from config.yaml
         id: meta
         run: |
           version="${{ github.event.inputs.version }}"
@@ -31,7 +31,7 @@ jobs:
           echo "version=${version}" >> "$GITHUB_OUTPUT"
           owner_lc=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
           echo "image=ghcr.io/${owner_lc}/ha-app-bambu-studio-api-amd64" >> "$GITHUB_OUTPUT"
-          echo "Building Bambu Studio API add-on version: ${version}"
+          echo "Building Bambu Studio API app version: ${version}"
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Log in to GHCR
@@ -51,8 +51,8 @@ jobs:
           tags: |
             ${{ steps.meta.outputs.image }}:${{ steps.meta.outputs.version }}
             ${{ steps.meta.outputs.image }}:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=bambu-studio-api-amd64
+          cache-to: type=gha,mode=max,scope=bambu-studio-api-amd64
           labels: |
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
             org.opencontainers.image.revision=${{ github.sha }}
