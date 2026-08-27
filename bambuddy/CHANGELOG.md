@@ -5,6 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- The App documentation now states the upstream license: BamBuddy is published
+  under the AGPL-3.0, which entitles you to its source — the link is in
+  `DOCS.md`. The packaging in this repository stays MIT.
+
+### Changed
+- Documentation uses "App" throughout, following Home Assistant's 2026.2
+  rename of add-ons.
+
 ## [1.0.18] - 2026-08-23
 
 ### Fixed

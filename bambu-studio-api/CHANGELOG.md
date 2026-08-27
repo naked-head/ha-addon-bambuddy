@@ -5,6 +5,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- The App documentation now states the upstream licenses: the wrapper is
+  AGPL-3.0 and its source is linked from `DOCS.md`, while the Bambu Studio CLI
+  follows Bambu Lab's own terms. The packaging in this repository stays MIT.
+
+### Fixed
+- The link to the upstream fork pointed at a repository that does not exist
+  (`ha-app-bambu-stdio-api`), so the attribution led nowhere.
+
+### Changed
+- Documentation uses "App" throughout, following Home Assistant's 2026.2
+  rename of add-ons.
+
 ## [0.1.10] - 2026-08-21
 Bump Bambu Studio from 02.08.02.60 to 02.08.02.61.
 

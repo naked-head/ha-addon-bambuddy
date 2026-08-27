@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- The App documentation now states the upstream license: InfluxDB OSS is MIT,
+  same as the packaging in this repository.
+
 ## [2.8.0-1] - 2026-07-22
 
 ### Added
