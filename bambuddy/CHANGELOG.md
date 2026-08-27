@@ -10,6 +10,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   under the AGPL-3.0, which entitles you to its source — the link is in
   `DOCS.md`. The packaging in this repository stays MIT.
 
+### Fixed
+- The image's OCI license label declared `MIT`, which described only the
+  packaging. It now says `MIT AND AGPL-3.0-only`, matching what the image
+  actually contains.
+
 ### Changed
 - Documentation uses "App" throughout, following Home Assistant's 2026.2
   rename of add-ons.

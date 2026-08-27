@@ -9,6 +9,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - The App documentation now states the upstream licenses: the wrapper is
   AGPL-3.0 and its source is linked from `DOCS.md`, while the Bambu Studio CLI
   follows Bambu Lab's own terms. The packaging in this repository stays MIT.
+- The image now carries an OCI license label, `MIT AND AGPL-3.0-only`,
+  covering both the MIT packaging and the AGPL-3.0 wrapper it ships.
 
 ### Fixed
 - The link to the upstream fork pointed at a repository that does not exist
