@@ -29,13 +29,18 @@ documentation. The software each App builds, downloads or runs is governed by
 its own license, which applies to those binaries and their source regardless
 of the MIT license on this packaging:
 
-  bambu-studio-api
-    - Bambu Studio CLI (Bambu Lab) — Bambu Lab's respective terms
-    - orca-slicer-api wrapper, branch bambuddy/profile-resolver
-      https://github.com/maziggy/orca-slicer-api — AGPL-3.0
-
   bambuddy
-    - BamBuddy, https://github.com/maziggy/bambuddy — see upstream repository
+    - BamBuddy, https://github.com/maziggy/bambuddy — AGPL-3.0
+
+  bambu-studio-api
+    - orca-slicer-api wrapper, branch bambuddy/profile-resolver,
+      https://github.com/maziggy/orca-slicer-api — AGPL-3.0
+    - Bambu Studio CLI (Bambu Lab) — Bambu Lab's respective terms
 
   influxdb
     - InfluxDB 2.x (InfluxData) — MIT
+
+The AGPL-3.0 components above are served over a network by the Apps that
+package them. Their source is available at the URLs listed here; the App
+documentation repeats these pointers so users can reach them from within
+Home Assistant.
