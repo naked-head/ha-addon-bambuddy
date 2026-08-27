@@ -1,6 +1,7 @@
 MIT License
 
 Copyright (c) 2026 Giorgio Parri
+Copyright (c) 2026 griffinmartin
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,3 +20,22 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+---
+
+Note: this MIT license covers the Home Assistant App packaging in this
+repository only — Dockerfiles, s6 service scripts, configuration and
+documentation. The software each App builds, downloads or runs is governed by
+its own license, which applies to those binaries and their source regardless
+of the MIT license on this packaging:
+
+  bambu-studio-api
+    - Bambu Studio CLI (Bambu Lab) — Bambu Lab's respective terms
+    - orca-slicer-api wrapper, branch bambuddy/profile-resolver
+      https://github.com/maziggy/orca-slicer-api — AGPL-3.0
+
+  bambuddy
+    - BamBuddy, https://github.com/maziggy/bambuddy — see upstream repository
+
+  influxdb
+    - InfluxDB 2.x (InfluxData) — MIT
