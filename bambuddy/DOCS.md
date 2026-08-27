@@ -1,8 +1,8 @@
 # BamBuddy – Documentation
 
-This app wraps the official [BamBuddy](https://bambuddy.cool) Docker image as a native Home Assistant Supervisor app, providing local management of Bambu Lab printers without Bambu Cloud.
+This App wraps the official [BamBuddy](https://bambuddy.cool) Docker image as a native Home Assistant Supervisor app, providing local management of Bambu Lab printers without Bambu Cloud.
 
-This app is part of the [`naked-head/homeassistant-addons`](https://github.com/naked-head/homeassistant-addons) collection.
+This App is part of the [`naked-head/homeassistant-addons`](https://github.com/naked-head/homeassistant-addons) collection.
 
 ---
 
@@ -19,20 +19,20 @@ This app is part of the [`naked-head/homeassistant-addons`](https://github.com/n
 | `share_subfolders` | list | *(empty)* | Subfolders under Home Assistant's `/share` to expose to BamBuddy's File Manager, one per entry (e.g. `bambuddy`). Enter just the subfolder name, without a leading `/share/`. Empty list disables the feature |
 | `media_subfolders` | list | *(empty)* | Subfolders under Home Assistant's `/media` to expose to BamBuddy's File Manager, one per entry (e.g. `bambuddy`). Enter just the subfolder name, without a leading `/media/`. Empty list disables the feature |
 | `use_system_trust_store` | boolean | `false` | Enable if BamBuddy needs to trust a self-signed certificate (e.g. a self-signed HA instance at `ha_url`) |
-| `certfile` | string | `custom_ca.crt` | Filename of the CA certificate to install, placed in this add-on's config folder. Only used when `use_system_trust_store` is enabled |
+| `certfile` | string | `custom_ca.crt` | Filename of the CA certificate to install, placed in this App's config folder. Only used when `use_system_trust_store` is enabled |
 | `enable_ipv6` | boolean | `false` | Bind on `::` instead of `0.0.0.0` for IPv6 reachability. **Opt-in and off by default** — see warning below |
 
 > **Note on `bind_address` and `trusted_frame_origins`:** these fields have no default value and simply won't appear in the options object until you set them — this is expected, and it avoids a Supervisor quirk where an empty-string default can make an optional field disappear from the UI after a restart.
 
 > **Timezone:** BamBuddy's timezone is detected automatically from Home Assistant at startup via the Supervisor API — there's no `timezone` option to set manually. If the Supervisor can't be reached at startup (e.g. very first boot, temporary network hiccup), BamBuddy falls back to `UTC` until the next restart.
 
-> ⚠️ **`enable_ipv6` warning:** on some systems, binding uvicorn on `::` stops accepting IPv4 connections entirely — even with IPv6 disabled at the OS level (`net.ipv6.bindv6only=0`). This is a uvicorn/asyncio socket behavior we can't detect or guard against from the add-on side. If you enable this and BamBuddy becomes unreachable (locally, via reverse proxy, or via tunnel), disable `enable_ipv6` again from the Configuration tab in YAML mode and restart — this always restores access, since IPv4-only is the default and known-working configuration.
+> ⚠️ **`enable_ipv6` warning:** on some systems, binding uvicorn on `::` stops accepting IPv4 connections entirely — even with IPv6 disabled at the OS level (`net.ipv6.bindv6only=0`). This is a uvicorn/asyncio socket behavior we can't detect or guard against from the App side. If you enable this and BamBuddy becomes unreachable (locally, via reverse proxy, or via tunnel), disable `enable_ipv6` again from the Configuration tab in YAML mode and restart — this always restores access, since IPv4-only is the default and known-working configuration.
 
 ---
 
 ## Home Assistant integration (`ha_url` / `ha_token`)
 
-This add-on runs with `homeassistant_api: true`, so on a normal HA Supervised/OS install BamBuddy can already reach the Home Assistant Core API through the Supervisor's internal proxy — **you don't need to set `ha_url` or `ha_token` at all**. They're provided only for the case where you want BamBuddy to talk to a *different* Home Assistant instance than the one running this add-on. The same connection is also used to auto-detect the timezone at startup (see note above).
+This App runs with `homeassistant_api: true`, so on a normal HA Supervised/OS install BamBuddy can already reach the Home Assistant Core API through the Supervisor's internal proxy — **you don't need to set `ha_url` or `ha_token` at all**. They're provided only for the case where you want BamBuddy to talk to a *different* Home Assistant instance than the one running this App. The same connection is also used to auto-detect the timezone at startup (see note above).
 
 ---
 
@@ -56,20 +56,20 @@ Entries are sanitised before use: a `..` segment is rejected outright, a redunda
 
 ## External PostgreSQL database (`database_url`)
 
-By default BamBuddy stores everything in a SQLite database under the add-on's persistent data volume. If you'd rather point it at an external PostgreSQL server, set `database_url` (e.g. `postgresql+asyncpg://bambuddy:yourpassword@db-host:5432/bambuddy`). BamBuddy creates all tables automatically on first startup; backup/restore then uses `pg_dump`/`pg_restore` instead of a file copy.
+By default BamBuddy stores everything in a SQLite database under the App's persistent data volume. If you'd rather point it at an external PostgreSQL server, set `database_url` (e.g. `postgresql+asyncpg://bambuddy:yourpassword@db-host:5432/bambuddy`). BamBuddy creates all tables automatically on first startup; backup/restore then uses `pg_dump`/`pg_restore` instead of a file copy.
 
 ---
 
 ## Self-signed certificates (`use_system_trust_store` / `certfile`)
 
-If BamBuddy needs to validate a self-signed certificate — for example when `ha_url` points to a Home Assistant instance reachable only over a self-signed HTTPS certificate — you can install that CA certificate into the add-on's trust store:
+If BamBuddy needs to validate a self-signed certificate — for example when `ha_url` points to a Home Assistant instance reachable only over a self-signed HTTPS certificate — you can install that CA certificate into the App's trust store:
 
-1. Place your CA certificate (`.crt` file) in this add-on's config folder (`addon_configs/<slug>_bambuddy/`, accessible via the File Editor add-on).
+1. Place your CA certificate (`.crt` file) in this App's config folder (`addon_configs/<slug>_bambuddy/`, accessible via the File Editor App).
 2. Set `certfile` to the exact filename (default: `custom_ca.crt`).
 3. Enable `use_system_trust_store`.
-4. Restart the add-on.
+4. Restart the App.
 
-If the certificate file isn't found at startup, the add-on logs a warning and leaves the system trust store disabled rather than failing silently.
+If the certificate file isn't found at startup, the App logs a warning and leaves the system trust store disabled rather than failing silently.
 
 ---
 
@@ -102,8 +102,8 @@ BamBuddy's web interface cannot be embedded via HA Ingress due to SPA architectu
 
 If you access Home Assistant via HTTP on your local network:
 
-1. Add your HA URL as an entry in `trusted_frame_origins` in the add-on configuration (e.g. `http://192.168.1.100:8123`).
-2. Restart the add-on.
+1. Add your HA URL as an entry in `trusted_frame_origins` in the App configuration (e.g. `http://192.168.1.100:8123`).
+2. Restart the App.
 3. Go to **Settings → Dashboards**.
 4. Click **Add Dashboard** → **Webpage**.
 5. Fill in:
@@ -153,7 +153,7 @@ If you want to serve BamBuddy over HTTPS on your local network without exposing 
 
 #### Step 1 — Install Nginx
 
-Install Nginx on your Home Assistant host or on another machine on the LAN. The [Nginx Proxy Manager](https://nginxproxymanager.com/) add-on for Home Assistant is a convenient option.
+Install Nginx on your Home Assistant host or on another machine on the LAN. The [Nginx Proxy Manager](https://nginxproxymanager.com/) App for Home Assistant is a convenient option.
 
 #### Step 2 — Configure Nginx
 
@@ -197,7 +197,7 @@ Replace `your-ha-domain.com` with the URL you use to access Home Assistant.
 
 ### Option 4 — Remote access via VPN
 
-If you want to access BamBuddy from outside your network without exposing it publicly, use a VPN such as [WireGuard](https://www.wireguard.com/) or [Tailscale](https://tailscale.com/). Both are available as Home Assistant add-ons.
+If you want to access BamBuddy from outside your network without exposing it publicly, use a VPN such as [WireGuard](https://www.wireguard.com/) or [Tailscale](https://tailscale.com/). Both are available as Home Assistant Apps.
 
 Once connected to the VPN, your remote device is on the LAN and can reach BamBuddy via HTTP as if you were home — use Option 1 in this case.
 
@@ -246,11 +246,11 @@ or
 
 ## Data persistence
 
-BamBuddy data (database, virtual printer certificates, logs) is stored in the HA Supervisor data volume and survives add-on updates and restarts.
+BamBuddy data (database, virtual printer certificates, logs) is stored in the HA Supervisor data volume and survives App updates and restarts.
 
 ### BamBuddy backups (`/share/bambuddy_backups`)
 
-If you use BamBuddy's own backup feature, the resulting files are stored under `/share/bambuddy_backups` rather than inside the add-on's persistent data volume. This is deliberate: Home Assistant's own App/Supervisor backups snapshot the entire persistent data volume, so a BamBuddy backup stored *inside* that volume would get bundled into every subsequent HA backup — including all previous BamBuddy backups still sitting there — growing the HA backup file without bound.
+If you use BamBuddy's own backup feature, the resulting files are stored under `/share/bambuddy_backups` rather than inside the App's persistent data volume. This is deliberate: Home Assistant's own App/Supervisor backups snapshot the entire persistent data volume, so a BamBuddy backup stored *inside* that volume would get bundled into every subsequent HA backup — including all previous BamBuddy backups still sitting there — growing the HA backup file without bound.
 
 `/share` is never included in HA's own backups by default, so this keeps the two backup systems independent: back up BamBuddy from within BamBuddy, and back up Home Assistant (config, other Apps) with HA's own backup feature, without either one duplicating the other's data.
 
@@ -260,9 +260,22 @@ If the migration can't be verified (a failed copy, a full disk, a read-only `/sh
 
 ---
 
+## Third-party software
+
+This App packages [BamBuddy](https://github.com/maziggy/bambuddy), which is
+published under the **AGPL-3.0**. The AGPL grants you the right to obtain the
+source of software you interact with over a network — which is what this App
+serves — and the complete source is available at the link above.
+
+The packaging in this repository — Dockerfile, service scripts, configuration
+and this documentation — is MIT licensed and lives at
+[naked-head/homeassistant-addons](https://github.com/naked-head/homeassistant-addons).
+
+---
+
 ## Support
 
-For issues with the **add-on packaging**:
+For issues with the **App packaging**:
 <https://github.com/naked-head/homeassistant-addons/issues>
 
 For issues with **BamBuddy itself**:
