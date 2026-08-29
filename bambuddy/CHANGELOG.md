@@ -5,17 +5,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.0.19] - 2026-08-29
+
 ### Added
-- The App documentation now states the upstream license: BamBuddy is published
-  under the AGPL-3.0, which entitles you to its source — the link is in
-  `DOCS.md`. The packaging in this repository stays MIT.
+- The App documentation now states the upstream license: BamBuddy is published under the AGPL-3.0, which entitles you to its source — the link is in `DOCS.md`. The packaging in this repository stays MIT.
 
 ### Fixed
-- The image's OCI license label declared `MIT`, which described only the
-  packaging. It now says `MIT AND AGPL-3.0-only`, matching what the image
-  actually contains.
+- The image's OCI license label declared `MIT`, which described only the packaging. It now says `MIT AND AGPL-3.0-only`, matching what the image actually contains.
 
 ### Changed
+- Updated BamBuddy to 1.2.5.4 (from 1.2.5.3). A fix-heavy release upstream, with around 90 fixes — the heaviest runs on AMS and K profiles, on archives from prints BamBuddy did not dispatch, and on Spoolman cost attribution. The one substantial feature running through it: a spool now carries a different filament preset per printer model and a K profile per hotend, and every path that configures an AMS slot honours both. Around it sit scheduled AMS drying, Filament Track Switch support, Dutch as the fourteenth interface language, and Home Assistant sensors bound to storage locations. No breaking changes.
+
+  Full upstream release notes: https://github.com/maziggy/bambuddy/releases/tag/v1.2.5.4
+
+  If you are coming from 1.0.12 or earlier (BamBuddy 0.2.4.9), read the 1.0.13 entry below first — all of its upgrade callouts still apply to you.
 - Documentation uses "App" throughout, following Home Assistant's 2026.2
   rename of add-ons.
 
@@ -213,7 +216,8 @@ Shortly after the 1.0.11 release, a bug was found in the automatic timezone dete
 - Configurable bind address for multi-IP setups (e.g. IP alias to avoid port conflicts)
 - Configurable timezone and log level
 
-[Unreleased]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.18...HEAD
+[Unreleased]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.19...HEAD
+[1.0.19]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.18...bambuddy-v1.0.19
 [1.0.18]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.17...bambuddy-v1.0.18
 [1.0.17]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.16...bambuddy-v1.0.17
 [1.0.16]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.15...bambuddy-v1.0.16
