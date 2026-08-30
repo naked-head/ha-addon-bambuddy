@@ -5,6 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.0.20] - 2026-08-30
+
+### Changed
+- Updated BamBuddy to 1.2.5.5 (from 1.2.5.4). Upstream hotfix for a regression that could stop every RTSP camera at once on installs whose launcher does not pin Python's asyncio event loop. **This App was never affected:** it has pinned `--loop asyncio` since its first release, and the same pinning also rules out the silent Virtual Printer FTP truncation described in the upstream notes. Nothing else in 1.2.5.4 is changed by this release.
+
+  Full upstream release notes: https://github.com/maziggy/bambuddy/releases/tag/v1.2.5.5
+
+  If you are coming from 1.0.12 or earlier (BamBuddy 0.2.4.9), read the 1.0.13 entry below first — all of its upgrade callouts still apply to you.
+
 ## [1.0.19] - 2026-08-29
 
 ### Added
@@ -216,7 +225,8 @@ Shortly after the 1.0.11 release, a bug was found in the automatic timezone dete
 - Configurable bind address for multi-IP setups (e.g. IP alias to avoid port conflicts)
 - Configurable timezone and log level
 
-[Unreleased]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.19...HEAD
+[Unreleased]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.20...HEAD
+[1.0.20]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.19...bambuddy-v1.0.20
 [1.0.19]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.18...bambuddy-v1.0.19
 [1.0.18]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.17...bambuddy-v1.0.18
 [1.0.17]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.16...bambuddy-v1.0.17
