@@ -1,0 +1,6 @@
+{
+  "log_level": "info",
+  "trusted_frame_origins": [],
+  "use_system_trust_store": false,
+  "enable_ipv6": false
+}

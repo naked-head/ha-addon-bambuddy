@@ -185,7 +185,16 @@ if bashio::config.true 'use_system_trust_store'; then
     fi
 fi
 
-export PORT=8000
+# host_network: true means Docker performs no port mapping -- the Supervisor's
+# Network panel only records the user's intent, so uvicorn must bind the port
+# that was actually configured. bashio::addon.port returns null when the field
+# is cleared, which is meaningless under host networking, so fall back to 8000.
+PORT=$(bashio::addon.port "8000/tcp")
+if ! bashio::var.has_value "${PORT}"; then
+    bashio::log.warning "No Web UI port configured; falling back to 8000."
+    PORT=8000
+fi
+export PORT
 export PYTHONPATH=/app
 export PYTHONUNBUFFERED=1
 

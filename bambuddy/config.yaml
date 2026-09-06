@@ -17,28 +17,8 @@ map:
   - media:rw
 ports:
   8000/tcp: 8000
-  3000/tcp: 3000
-  3002/tcp: 3002
-  2021/udp: 2021
-  8883/tcp: 8883
-  6000/tcp: 6000
-  322/tcp: 322
-  990/tcp: 990
-  2024/tcp: 2024
-  2025/tcp: 2025
-  2026/tcp: 2026
 ports_description:
   8000/tcp: BamBuddy Web UI
-  3000/tcp: Slicer bind/detect handshake
-  3002/tcp: Slicer bind/detect handshake (alt)
-  2021/udp: SSDP printer discovery
-  8883/tcp: MQTT over TLS (Virtual Printer)
-  6000/tcp: File transfer tunnel
-  322/tcp: RTSP camera streaming (X1/H2/P2)
-  990/tcp: FTPS control
-  2024/tcp: Proprietary slicer port (A1/P1S)
-  2025/tcp: Proprietary slicer port (A1/P1S)
-  2026/tcp: Proprietary slicer port (A1/P1S)
 options:
   log_level: "info"
   trusted_frame_origins: []
