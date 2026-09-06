@@ -75,9 +75,11 @@ If the certificate file isn't found at startup, the App logs a warning and leave
 
 ## Ports
 
+Only the Web UI port can be changed, from **Configuration → Network**. Every other port is fixed: some are hardcoded inside BamBuddy, the rest are dictated by the protocols Bambu Lab printers speak, and a printer will look for them exactly where this table says. They are documented here rather than shown in the Network panel because there is nothing to choose — this is what you may need to open on your network.
+
 | Port | Protocol | Description |
 |---|---|---|
-| 8000 | TCP | BamBuddy Web UI |
+| 8000 | TCP | BamBuddy Web UI — configurable |
 | 3000 | TCP | Slicer bind/detect handshake |
 | 3002 | TCP | Slicer bind/detect handshake (alt) |
 | 2021 | UDP | SSDP printer discovery |

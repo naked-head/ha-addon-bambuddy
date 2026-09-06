@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.0.21] - 2026-09-06
+
+### Fixed
+- **Changing the Web UI port had no effect.** The port set in Configuration → Network was recorded but never read, so the App always started on 8000: the new port answered nothing, the old one kept working, and the "Open Web UI" button — which does follow the setting — pointed at a dead port. It now starts on the port you configure; clearing the field falls back to 8000. Fixes #43.
+
+### Changed
+- Configuration → Network now lists only the Web UI port. The other ten entries were never configurable: BamBuddy fixes some internally and the Bambu Lab protocols fix the rest, and because this App uses host networking Home Assistant cannot remap them either — editing those fields did nothing. They are documented in `DOCS.md` instead, along with the FTP passive data range, which is too wide to appear in the panel at all. Nothing breaks if you had changed any of them: those values had no effect before either.
+
 ## [1.0.20] - 2026-08-30
 
 ### Changed
@@ -225,7 +233,8 @@ Shortly after the 1.0.11 release, a bug was found in the automatic timezone dete
 - Configurable bind address for multi-IP setups (e.g. IP alias to avoid port conflicts)
 - Configurable timezone and log level
 
-[Unreleased]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.20...HEAD
+[Unreleased]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.21...HEAD
+[1.0.21]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.20...bambuddy-v1.0.21
 [1.0.20]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.19...bambuddy-v1.0.20
 [1.0.19]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.18...bambuddy-v1.0.19
 [1.0.18]: https://github.com/naked-head/homeassistant-addons/compare/bambuddy-v1.0.17...bambuddy-v1.0.18
